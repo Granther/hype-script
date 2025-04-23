@@ -1,0 +1,8 @@
+import *other as other
+
+stdout "hello"
+
+stderr "err"
+
+heres input
+set input read_stdin
