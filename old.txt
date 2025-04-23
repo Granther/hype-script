@@ -1,0 +1,14 @@
+glunc mlorp() {
+    print "hello"
+    var t = 10
+    print 10
+    print x
+}
+
+    hewert { // Essentially wert -> try -> ohshit -> wert s
+        var x = splink()
+        print x
+    }
+
+// What does a basic parser that does not use semicolons need?
+// If stmt ends in '}' add end tok
