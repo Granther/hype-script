@@ -83,6 +83,7 @@ func (g *Hype) Run(source string) error {
 	}
 
 	statements := g.Parser.Parse(tokens)
+	// Debug to see statement info
 	for _, stmt := range statements {
 		fmt.Printf("%s\n", stmt.String())
 	}
@@ -92,12 +93,12 @@ func (g *Hype) Run(source string) error {
 		return nil
 	}
 
-	//g.Interpreter.Interpret(statements)
+	g.Interpreter.Interpret(statements)
 
-	// if g.Interpreter.GetHadRuntimeError() {
-	// 	fmt.Println("Runtime Error encountered in Run")
-	// 	return nil
-	// }
+	if g.Interpreter.GetHadRuntimeError() {
+		fmt.Println("Runtime Error encountered in Run")
+		return nil
+	}
 
 	return nil
 }

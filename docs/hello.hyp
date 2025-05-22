@@ -1,6 +1,7 @@
-
 print "olah"
-
-fun again() {
-    print "olah from func"
-}
+//fun again() {
+//    print "olah from func"
+//}
+// Lets think about this
+// When we have a newline, it is similar to a ;
+// So END should only appear when a newline appears

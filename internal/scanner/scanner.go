@@ -1,7 +1,6 @@
 package scanner
 
 import (
-	"fmt"
 	herror "hype-script/internal/error"
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
@@ -21,7 +20,7 @@ type Scanner struct {
 }
 
 func NewScanner() *Scanner {
-	// Map of string to token.ITEM 
+	// Map of string to token.ITEM
 	keywords := token.BuildKeywords()
 	leftOperators := token.BuildLeftOper()
 
@@ -88,12 +87,12 @@ func (s *Scanner) scanToken() {
 		s.addSimpleToken(token.LEFT_BRACE)
 	case '}':
 		s.addSimpleToken(token.RIGHT_BRACE)
-		for s.peek() == ' ' {
-			s.advance()
-		}
-		if s.peek() != '\n' {
-			s.addSimpleToken(token.END)
-		}
+		// for s.peek() == ' ' {
+		// 	s.advance()
+		// }
+		// if s.peek() != '\n' {
+		// 	s.addSimpleToken(token.END)
+		// }
 	case ',':
 		s.addSimpleToken(token.COMMA)
 	case '.':
@@ -344,10 +343,10 @@ func (s *Scanner) identifier() {
 
 	s.addSimpleToken(tokType)
 
-	if s.futureChar() == '}' {
-		fmt.Println("future char")
-		s.addSimpleToken(token.END)
-	}
+	// if s.futureChar() == '}' {
+	// 	fmt.Println("future char")
+	// 	s.addSimpleToken(token.END)
+	// }
 }
 
 // Check and see if a byte char is alpha numeric

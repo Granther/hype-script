@@ -135,7 +135,7 @@ func (e *Return) Accept(visitor StmtVisitor) error {
 
 // String()
 func (e *Print) String() string {
-	return fmt.Sprintf("%s, %s", e.Expr.GetType(), e.Expr.GetVal())
+	return fmt.Sprintf("Print ~ Type: %s, Val: %s", e.Expr.GetType(), e.Expr.GetVal())
 }
 
 func (e *Expression) String() string {

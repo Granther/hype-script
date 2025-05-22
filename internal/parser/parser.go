@@ -12,11 +12,11 @@ import (
 // Produce a syntax tree from tokens
 // Detect errors in a sequence of tokens
 
-// A parser shoukd (with context of an errors)
+// A parser should (with context of an errors)
 // Detect and report the error
 // If an error is not caught, bad stuff can happen in the back end
 // Avoid crashing
-// Valid input shoukd not cause it to loop infinently, input != valid code
+// Valid input should not cause it to loop infinently, input != valid code
 
 // Minimize cascaded errors
 // Errors that occur as a result of earlier errors
@@ -32,8 +32,9 @@ import (
 // What rules it is in the middle of parsing
 
 // Syncronizing after a panic
-// We syncronize back up with the unexplored par of the program that isnt directly affetced by the error
+// We syncronize back up with the unexplored part of the program that isnt directly affected by the error
 // This means we throw away all tokens on that line
+
 type Parser struct {
 	HadError    bool
 	Tokens      []token.Token
@@ -49,13 +50,15 @@ func NewParser(e types.Environment) *Parser {
 	}
 }
 
+// Takes in parsed tokens from Scanner and outputs list of Statements
 func (p *Parser) Parse(tokens []token.Token) []types.Stmt {
 	p.Tokens = tokens
-
 	statements := []types.Stmt{}
+
+	// While we are still within range of passed tokens
 	for !p.isAtEnd() {
-		p.match(token.END)
-		decl, err := p.declaration()
+		p.match(token.END)           // Consume endline token if its there
+		decl, err := p.declaration() // Decl is start of recursive statment parsing
 		if err != nil {
 			p.HadError = true
 			p.syncronize()
@@ -204,6 +207,10 @@ func (p *Parser) statement() (types.Stmt, error) {
 
 	if p.match(token.WHILE) {
 		return p.whileStmt()
+	}
+
+	if p.match(token.PAR) {
+		fmt.Println("Got PAR token")
 	}
 
 	// Start of block statement
@@ -414,7 +421,7 @@ func (p *Parser) exprStmt() (types.Stmt, error) {
 }
 
 func (p *Parser) expression() (types.Expr, error) {
-	return p.assignment()
+	return p.assignment() // Top level item contained in expression to start recursive descent 
 }
 
 func (p *Parser) assignment() (types.Expr, error) {
@@ -645,7 +652,9 @@ func (p *Parser) index() (types.Expr, error) {
 			return nil, err
 		}
 		_, err = p.consume(token.RIGHT_BRACKET, "Expect ']' to end indexing expression.")
-		if err != nil { return nil, err }
+		if err != nil {
+			return nil, err
+		}
 		return types.NewIndexExpr(expr, idx), nil
 	}
 	return expr, nil
@@ -686,18 +695,20 @@ func (p *Parser) primary() (types.Expr, error) {
 	}
 
 	// It has to be in a func that sees if left bracket lies after an expression
-	if p.match(token.LEFT_BRACKET) { 
+	if p.match(token.LEFT_BRACKET) {
 		literalToken := p.previous()
 		var data []types.Expr
 		for !p.match(token.RIGHT_BRACKET) && !p.isAtEnd() {
-			expr, err := p.expression() 
+			expr, err := p.expression()
 			if err != nil {
 				return nil, err
 			}
 			data = append(data, expr)
 			if !p.match(token.COMMA) {
 				_, err := p.consume(token.RIGHT_BRACKET, "Expect ']' at the end of glist.")
-				if err != nil { return nil, err }
+				if err != nil {
+					return nil, err
+				}
 				break
 			}
 		}
