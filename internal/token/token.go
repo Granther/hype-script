@@ -24,10 +24,11 @@ const (
 	STAR
 	END
 	SPACE
+	TILDE
 
 	// One or two character tokens.
-	BANG
-	BANG_EQUAL
+	BANG       // !
+	BANG_EQUAL // !=
 	EQUAL
 	EQUAL_EQUAL
 	GREATER
@@ -40,6 +41,7 @@ const (
 	MINUS_EQUAL
 	STAR_EQUAL
 	SLASH_EQUAL
+	TILDE_EQUAL // ~=
 
 	// Literals.
 	IDENTIFIER
@@ -48,26 +50,22 @@ const (
 
 	// Keywords.
 	AND
-	CLASS
 	ELSE
 	FALSE
-	GLUNC
+	FUN
 	FOR
 	IF
-	NIL
+	NEWT // None
 	OR
-	PRINT
+	PRINT // Print stmt before Std lib
 	RETURN
-	SUPER
-	THIS
 	TRUE
 	VAR
 	WHILE
-	WERT
-	WOOPS
-	TRY
 	IMPORT
 	AS
+	PAR // Parallel
+	HYP // Hype
 
 	// End of file
 	EOF
@@ -87,6 +85,8 @@ var TokenTypeNames = map[TokenType]string{
 	STAR:          "STAR",
 	END:           "END",
 	SPACE:         "SPACE",
+	TILDE:         "TILDE",
+	TILDE_EQUAL:   "TILDE_EQUAL",
 	BANG:          "BANG",
 	BANG_EQUAL:    "BANG_EQUAL",
 	EQUAL:         "EQUAL",
@@ -99,21 +99,19 @@ var TokenTypeNames = map[TokenType]string{
 	STRING:        "STRING",
 	NUMBER:        "NUMBER",
 	AND:           "AND",
-	CLASS:         "CLASS",
 	ELSE:          "ELSE",
 	TRUE:          "TRUE",
 	FALSE:         "FALSE",
-	GLUNC:         "GLUNC",
+	FUN:           "FUN",
 	FOR:           "FOR",
 	IF:            "IF",
-	NIL:           "NIL",
+	NEWT:          "NEWT",
 	OR:            "OR",
 	PRINT:         "PRINT",
 	RETURN:        "RETURN",
-	WERT:          "WERT",
-	WOOPS:         "WOOPS",
-	TRY:           "TRY",
 	VAR:           "VAR",
+	PAR:           "PAR",
+	HYP:           "HYP",
 	PLUS_EQUAL:    "PLUS_EQUAL",
 	PLUS_PLUS:     "PLUS_PLUS",
 	MINUS_MINUS:   "MINUS_MINUS",
@@ -153,13 +151,14 @@ func BuildKeywords() (keywords map[string]TokenType) {
 	keywords["false"] = FALSE
 	keywords["for"] = FOR
 	keywords["if"] = IF
-	keywords["nil"] = NIL
+	keywords["newt"] = NEWT
 	keywords["or"] = OR
 	keywords["print"] = PRINT
 	keywords["return"] = RETURN
 	keywords["true"] = TRUE
 	keywords["while"] = WHILE
-	keywords["try"] = TRY
+	keywords["par"] = PAR
+	keywords["hyp"] = HYP
 	return
 }
 
@@ -170,5 +169,6 @@ func BuildLeftOper() (leftOperators map[rune]TokenType) {
 	leftOperators['*'] = STAR
 	leftOperators['/'] = SLASH
 	leftOperators['='] = EQUAL
+	leftOperators['~'] = TILDE
 	return
 }

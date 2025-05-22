@@ -46,7 +46,7 @@ func (g *Hype) Start() error {
 
 func (g *Hype) Runfile(file string) error {
 	ext := filepath.Ext(file)
-	if ext != ".glp" {
+	if ext != ".hyp" {
 		return fmt.Errorf("hype file (.hyp) is required to run, got %s", ext)
 	}
 	data, err := os.ReadFile(file)

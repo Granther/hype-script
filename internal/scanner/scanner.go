@@ -1,12 +1,12 @@
 package scanner
 
 import (
-	"os"
 	"fmt"
-	"strconv"
 	herror "hype-script/internal/error"
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
+	"os"
+	"strconv"
 )
 
 // Whats wrong with putting all tokens in a hashtable
