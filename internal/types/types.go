@@ -25,6 +25,7 @@ type Environment interface {
 
 type Stmt interface {
 	Accept(visitor StmtVisitor) error
+	String() string
 }
 
 type StmtVisitor interface {
@@ -36,9 +37,6 @@ type StmtVisitor interface {
 	VisitWhileStmt(stmt *While) error
 	VisitFunStmt(stmt *Fun) error
 	VisitReturnStmt(stmt *Return) error
-	VisitWertStmt(stmt *Wert) error
-	VisitTryStmt(stmt *Try) error
-	VisitClassStmt(stmt *Class) error
 }
 
 type Visitor interface {
@@ -61,5 +59,6 @@ type Visitor interface {
 
 type Expr interface {
 	Accept(visitor Visitor) (any, error)
-	GetType() string
+	GetType() string // Gets simple type of Expressin
+	GetVal() string // Gets value of Expression, loose and for debugging. Not cononical or recursive
 }

@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"hype-script/internal/token"
 )
 
@@ -26,4 +27,8 @@ func (c *CallExpr) Accept(visitor Visitor) (any, error) {
 
 func (v *CallExpr) GetType() string {
 	return v.Type
+}
+
+func (v *CallExpr) GetVal() string {
+	return fmt.Sprintf("%s", v.Callee.GetVal())
 }

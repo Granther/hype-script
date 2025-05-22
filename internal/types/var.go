@@ -23,3 +23,7 @@ func (v *VarExpr) Accept(visitor Visitor) (any, error) {
 func (v *VarExpr) GetType() string {
 	return v.Type
 }
+
+func (v *VarExpr) GetVal() string {
+	return v.Name.String()
+}

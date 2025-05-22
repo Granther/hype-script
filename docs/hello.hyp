@@ -1,9 +1,6 @@
-import *other as other
 
-stdout "hello"
+print "olah"
 
-stderr "err"
-
-heres input
-set input read_stdin
-
+fun again() {
+    print "olah from func"
+}

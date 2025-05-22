@@ -138,6 +138,7 @@ func NewToken(tokType TokenType, lexeme string, literal *literal.Literal, line i
 	}
 }
 
+// Gives the token type, string value used to identify it, and literal val
 func (t *Token) String() string {
 	return fmt.Sprintf("%d %s %s", t.Type, t.Lexeme, t.Literal.String())
 }

@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"hype-script/internal/token"
 )
 
@@ -10,10 +11,6 @@ type Expression struct {
 
 type Print struct {
 	Expr Expr
-}
-
-type Wert struct {
-	Val Expr
 }
 
 type Var struct {
@@ -46,32 +43,6 @@ type Fun struct {
 type Return struct {
 	Keyword token.Token
 	Val     Expr
-}
-
-type Try struct {
-	Attempt  Stmt
-	Woops    Stmt
-	WoopsTok token.Token
-}
-
-type Class struct {
-	Name    token.Token
-	Methods []Stmt
-}
-
-func NewClass(name token.Token, methods []Stmt) Stmt {
-	return &Class{
-		Name:    name,
-		Methods: methods,
-	}
-}
-
-func NewTry(attempt Stmt, woops Stmt, woopsTok token.Token) Stmt {
-	return &Try{
-		Attempt:  attempt,
-		Woops:    woops,
-		WoopsTok: woopsTok,
-	}
 }
 
 func NewReturn(keyword token.Token, val Expr) Stmt {
@@ -114,12 +85,6 @@ func NewBlock(statements []Stmt) Stmt {
 func NewPrint(expr Expr) Stmt {
 	return &Print{
 		Expr: expr,
-	}
-}
-
-func NewWert(expr Expr) Stmt {
-	return &Wert{
-		Val: expr,
 	}
 }
 
@@ -168,14 +133,36 @@ func (e *Return) Accept(visitor StmtVisitor) error {
 	return visitor.VisitReturnStmt(e)
 }
 
-func (e *Wert) Accept(visitor StmtVisitor) error {
-	return visitor.VisitWertStmt(e)
+// String()
+func (e *Print) String() string {
+	return fmt.Sprintf("%s, %s", e.Expr.GetType(), e.Expr.GetVal())
 }
 
-func (e *Try) Accept(visitor StmtVisitor) error {
-	return visitor.VisitTryStmt(e)
+func (e *Expression) String() string {
+	return fmt.Sprintf("%s, %s", e.Expr.GetType(), e.Expr.GetVal())
 }
 
-func (e *Class) Accept(visitor StmtVisitor) error {
-	return visitor.VisitClassStmt(e)
+func (e *Var) String() string {
+	return fmt.Sprintf("%s, %s", e.Initializer.GetType(), e.Initializer.GetVal())
+}
+
+func (e *Block) String() string {
+	//return fmt.Sprintf("%s, %s", e.Expr.GetType(), e.Expr.GetVal())
+	return ""
+}
+
+func (e *If) String() string {
+	return fmt.Sprintf("%s, %s", e.Condition.GetType(), e.Condition.GetVal())
+}
+
+func (e *While) String() string {
+	return fmt.Sprintf("%s, %s", e.Condition.GetType(), e.Condition.GetVal())
+}
+
+func (e *Fun) String() string {
+	return fmt.Sprintf("Name: %s", e.Name.String())
+}
+
+func (e *Return) String() string {
+	return fmt.Sprintf("%s, %s", e.Val.GetType(), e.Val.GetVal())
 }

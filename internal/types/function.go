@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"hype-script/internal/token"
 )
 
@@ -26,4 +27,8 @@ func (f *FunExpr) Accept(visitor Visitor) (any, error) {
 
 func (v *FunExpr) GetType() string {
 	return v.Type
+}
+
+func (v *FunExpr) GetVal() string {
+	return fmt.Sprintf("%s", v.Name.String()) // Wasnt going to deal with parsing list here either
 }

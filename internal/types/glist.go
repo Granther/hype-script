@@ -1,20 +1,21 @@
 package types
 
 import (
+	"fmt"
 	"hype-script/internal/token"
 )
 
 type GlistExpr struct {
-	Type string
+	Type  string
 	Token token.Token
-	Data []Expr
+	Data  []Expr
 }
 
 func NewGlistExpr(data []Expr, token token.Token) Expr {
 	return &GlistExpr{
-		Type: "GlistExpr",
+		Type:  "GlistExpr",
 		Token: token,
-		Data: data,
+		Data:  data,
 	}
 }
 
@@ -28,4 +29,8 @@ func (v *GlistExpr) GetType() string {
 
 func (v *GlistExpr) GetToken() token.Token {
 	return v.Token
+}
+
+func (v *GlistExpr) GetVal() string {
+	return fmt.Sprintf("%s", v.Token.String()) // Wasnt going to deal with parsing list
 }

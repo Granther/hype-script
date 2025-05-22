@@ -72,40 +72,37 @@ func (p *Parser) declaration() (types.Stmt, error) {
 	if p.match(token.VAR) {
 		return p.varDeclaration()
 	}
-	if p.match(token.GLUNC) {
+	if p.match(token.FUN) {
 		return p.funDeclaration("function")
-	}
-	if p.match(token.CLASS) {
-		return p.classDeclaration()
 	}
 	// If not, fallback to standard stmt
 	return p.statement()
 }
 
-func (p *Parser) classDeclaration() (types.Stmt, error) {
-	name, err := p.consume(token.IDENTIFIER, "Expect a valid name following 'class'.")
-	if err != nil {
-		return nil, err
-	}
-	_, err = p.consume(token.LEFT_BRACE, "Expect '{' after class name.")
-	if err != nil {
-		return nil, err
-	}
+// func (p *Parser) classDeclaration() (types.Stmt, error) {
+// 	name, err := p.consume(token.IDENTIFIER, "Expect a valid name following 'class'.")
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	_, err = p.consume(token.LEFT_BRACE, "Expect '{' after class name.")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	var methods []types.Stmt
-	for !p.match(token.RIGHT_BRACE) {
-		if p.match(token.END) { continue }
-		method, err := p.funDeclaration("method")
-		if err != nil {
-			return nil, err
-		}
-		methods = append(methods, method)
-	}
+// 	var methods []types.Stmt
+// 	for !p.match(token.RIGHT_BRACE) {
+// 		if p.match(token.END) { continue }
+// 		method, err := p.funDeclaration("method")
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		methods = append(methods, method)
+// 	}
 
-	fmt.Print(methods)
+// 	fmt.Print(methods)
 
-	return types.NewClass(name, methods), nil
-}
+// 	return types.NewClass(name, methods), nil
+// }
 
 // A class is a list of func decls with a name, a named list of func decls!
 
@@ -207,14 +204,6 @@ func (p *Parser) statement() (types.Stmt, error) {
 
 	if p.match(token.WHILE) {
 		return p.whileStmt()
-	}
-
-	if p.match(token.WERT) {
-		return p.wertStmt()
-	}
-
-	if p.match(token.TRY) {
-		return p.tryStmt()
 	}
 
 	// Start of block statement
@@ -334,26 +323,26 @@ func (p *Parser) returnStmt() (types.Stmt, error) {
 	return types.NewReturn(keyword, val), nil
 }
 
-func (p *Parser) tryStmt() (types.Stmt, error) {
-	var woops types.Stmt
-	var wert token.Token
+// func (p *Parser) tryStmt() (types.Stmt, error) {
+// 	var woops types.Stmt
+// 	var wert token.Token
 
-	attempt, err := p.statement()
-	if err != nil {
-		return nil, err
-	}
+// 	attempt, err := p.statement()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	if p.match(token.WOOPS) {
-		wert = p.advance()
+// 	// if p.match(token.WOOPS) {
+// 	// 	wert = p.advance()
 
-		woops, err = p.statement()
-		if err != nil {
-			return nil, err
-		}
-	}
+// 	// 	woops, err = p.statement()
+// 	// 	if err != nil {
+// 	// 		return nil, err
+// 	// 	}
+// 	// }
 
-	return types.NewTry(attempt, woops, wert), nil
-}
+// 	return types.NewTry(attempt, woops, wert), nil
+// }
 
 func (p *Parser) whileStmt() (types.Stmt, error) {
 	condition, err := p.expression()
@@ -400,17 +389,17 @@ func (p *Parser) printStmt() (types.Stmt, error) {
 	return types.NewPrint(val), nil
 }
 
-func (p *Parser) wertStmt() (types.Stmt, error) {
-	val, err := p.expression()
-	if err != nil {
-		return nil, err
-	}
-	_, err = p.consume(token.END, "Expect 'end' after wert statement.")
-	if err != nil {
-		return nil, err
-	}
-	return types.NewWert(val), nil
-}
+// func (p *Parser) wertStmt() (types.Stmt, error) {
+// 	val, err := p.expression()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	_, err = p.consume(token.END, "Expect 'end' after wert statement.")
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return types.NewWert(val), nil
+// }
 
 func (p *Parser) exprStmt() (types.Stmt, error) {
 	val, err := p.expression()
@@ -671,7 +660,7 @@ func (p *Parser) primary() (types.Expr, error) {
 		return types.NewLiteralExpr(literal.NewLiteral(true)), nil
 	}
 
-	if p.match(token.NIL) {
+	if p.match(token.NEWT) {
 		return types.NewLiteralExpr(literal.NewLiteral(nil)), nil
 	}
 
@@ -742,8 +731,7 @@ func (p *Parser) syncronize() {
 		} // Found statement boundary
 
 		switch p.peek().Type {
-		case token.CLASS:
-		case token.GLUNC:
+		case token.FUN:
 		case token.VAR:
 		case token.FOR:
 		case token.IF:

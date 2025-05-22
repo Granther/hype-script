@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"hype-script/internal/token"
 )
 
@@ -24,4 +25,8 @@ func (r *ReturnExpr) Accept(visitor Visitor) (any, error) {
 
 func (v *ReturnExpr) GetType() string {
 	return v.Type
+}
+
+func (v *ReturnExpr) GetVal() string {
+	return fmt.Sprintf("%s, %s", v.Keyword.String(), v.Val.GetVal())
 }

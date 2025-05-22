@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 type IndexExpr struct {
 	Type  string
 	Expr  Expr
@@ -20,4 +22,8 @@ func (v *IndexExpr) Accept(visitor Visitor) (any, error) {
 
 func (v *IndexExpr) GetType() string {
 	return v.Type
+}
+
+func (v *IndexExpr) GetVal() string {
+	return fmt.Sprintf("%s, %s", v.Expr.GetVal(), v.Index.GetVal())
 }

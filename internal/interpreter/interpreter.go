@@ -2,15 +2,14 @@ package interpreter
 
 import (
 	"fmt"
-	"reflect"
 	"hype-script/internal/environment"
 	glorpError "hype-script/internal/error"
 	"hype-script/internal/glorpups"
-	"hype-script/internal/literal"
 	"hype-script/internal/native"
 	"hype-script/internal/token"
 	"hype-script/internal/types"
 	"hype-script/internal/utils"
+	"reflect"
 )
 
 // State and statements
@@ -262,16 +261,16 @@ func (i *Interpreter) VisitReturnStmt(stmt *types.Return) error {
 	return nil // No return val
 }
 
-func (i *Interpreter) VisitWertStmt(stmt *types.Wert) error {
-	if stmt.Val != nil {
-		v, err := i.evaluate(stmt.Val)
-		if err != nil {
-			return err
-		}
-		return glorpError.NewWertErr(v)
-	}
-	return nil
-}
+// func (i *Interpreter) VisitWertStmt(stmt *types.Wert) error {
+// 	if stmt.Val != nil {
+// 		v, err := i.evaluate(stmt.Val)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		return glorpError.NewWertErr(v)
+// 	}
+// 	return nil
+// }
 
 func (i *Interpreter) VisitPrintStmt(stmt *types.Print) error {
 	val, err := i.evaluate(stmt.Expr)
@@ -347,28 +346,28 @@ func (i *Interpreter) VisitIfStmt(stmt *types.If) error {
 	return nil
 }
 
-func (i *Interpreter) VisitClassStmt(stmt *types.Class) error {
-	return nil
-}
+// func (i *Interpreter) VisitClassStmt(stmt *types.Class) error {
+// 	return nil
+// }
 
-func (i *Interpreter) VisitTryStmt(stmt *types.Try) error {
-	err := i.execute(stmt.Attempt)
-	switch err.(type) {
-	case *glorpError.ReturnErr:
-		return err
-	case glorpups.Glorpup:
-		wertVal, _ := err.(*glorpError.WertErr)
-		newVar := types.NewVar(stmt.WoopsTok, types.NewLiteralExpr(literal.NewLiteral(wertVal)))
-		block := types.NewBlock([]types.Stmt{newVar, stmt.Woops})
-		err = i.execute(block)
-		// case *glorpError.WertErr:
-		// 	wertVal, _ := err.(*glorpError.WertErr)
-		// 	newVar := types.NewVar(stmt.WoopsTok, types.NewLiteralExpr(literal.NewLiteral(wertVal)))
-		// 	block := types.NewBlock([]types.Stmt{newVar, stmt.Woops})
-		// 	err = i.execute(block)
-	}
-	return err
-}
+// func (i *Interpreter) VisitTryStmt(stmt *types.Try) error {
+// 	err := i.execute(stmt.Attempt)
+// 	switch err.(type) {
+// 	case *glorpError.ReturnErr:
+// 		return err
+// 	case glorpups.Glorpup:
+// 		wertVal, _ := err.(*glorpError.WertErr)
+// 		newVar := types.NewVar(stmt.WoopsTok, types.NewLiteralExpr(literal.NewLiteral(wertVal)))
+// 		block := types.NewBlock([]types.Stmt{newVar, stmt.Woops})
+// 		err = i.execute(block)
+// 		// case *glorpError.WertErr:
+// 		// 	wertVal, _ := err.(*glorpError.WertErr)
+// 		// 	newVar := types.NewVar(stmt.WoopsTok, types.NewLiteralExpr(literal.NewLiteral(wertVal)))
+// 		// 	block := types.NewBlock([]types.Stmt{newVar, stmt.Woops})
+// 		// 	err = i.execute(block)
+// 	}
+// 	return err
+// }
 
 func (i *Interpreter) ExecuteBlock(stmts []types.Stmt, environment types.Environment) error {
 	prev := i.Environment // Save old, for setting back later

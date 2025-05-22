@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 type GroupingExpr struct {
 	Type string
 	Expr Expr
@@ -18,4 +20,8 @@ func (g *GroupingExpr) Accept(visitor Visitor) (any, error) {
 
 func (v *GroupingExpr) GetType() string {
 	return v.Type
+}
+
+func (v *GroupingExpr) GetVal() string {
+	return fmt.Sprintf("%s", v.Expr.GetVal())
 }

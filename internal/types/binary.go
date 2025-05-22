@@ -1,8 +1,10 @@
 package types
 
 import (
+	"fmt"
 	"hype-script/internal/token"
 )
+
 type BinaryExpr struct {
 	Type     string
 	Left     Expr
@@ -25,4 +27,8 @@ func (b *BinaryExpr) Accept(visitor Visitor) (any, error) {
 
 func (v *BinaryExpr) GetType() string {
 	return v.Type
+}
+
+func (v *BinaryExpr) GetVal() string {
+	return fmt.Sprintf("%s, %s, %s", v.Left.GetVal(), v.Operator.String(), v.Right.GetVal())
 }

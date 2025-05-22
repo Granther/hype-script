@@ -5,7 +5,6 @@ import (
 	herror "hype-script/internal/error"
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
-	"os"
 	"strconv"
 )
 
@@ -22,6 +21,7 @@ type Scanner struct {
 }
 
 func NewScanner() *Scanner {
+	// Map of string to token.ITEM 
 	keywords := token.BuildKeywords()
 	leftOperators := token.BuildLeftOper()
 
@@ -61,23 +61,18 @@ func (s *Scanner) isAtEnd() bool {
 	return s.Current >= len(s.Source)
 }
 
-type RuneProcedure func()
+// type RuneProcedure func()
 
-func (s *Scanner) createProcMap() (procMap map[rune]RuneProcedure) {
-	procMap = make(map[rune]RuneProcedure)
-	procMap['('] = func() {
-		fmt.Println("hello")
-	}
-	return
-}
+// func (s *Scanner) createProcMap() (procMap map[rune]RuneProcedure) {
+// 	procMap = make(map[rune]RuneProcedure)
+// 	procMap['('] = func() {
+// 		fmt.Println("hello")
+// 	}
+// 	return
+// }
 
 func (s *Scanner) scanToken() {
 	c := s.advance()
-
-	procMap := s.createProcMap()
-	procMap['(']()
-
-	os.Exit(1)
 
 	// fmt.Println(string(c))
 
@@ -150,6 +145,12 @@ func (s *Scanner) scanToken() {
 			s.addSimpleToken(token.BANG_EQUAL)
 		} else {
 			s.addSimpleToken(token.BANG)
+		}
+	case '~':
+		if s.match('=') {
+			s.addSimpleToken(token.TILDE_EQUAL)
+		} else {
+			s.addSimpleToken(token.TILDE)
 		}
 	case '/': // Are we doing division or commenting?
 		if s.match('/') { // If next char is /, is comment, read till the end of the line

@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 type WhileExpr struct {
 	Type      string
 	Condition Expr
@@ -20,4 +22,8 @@ func (w *WhileExpr) Accept(visitor Visitor) (any, error) {
 
 func (v *WhileExpr) GetType() string {
 	return v.Type
+}
+
+func (v *WhileExpr) GetVal() string {
+	return fmt.Sprintf("%s, %s", v.Condition.GetVal(), v.Body.String())
 }

@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"hype-script/internal/token"
 )
 
@@ -25,4 +26,8 @@ func (v *PostfixExpr) Accept(visitor Visitor) (any, error) {
 
 func (v *PostfixExpr) GetType() string {
 	return v.Type
+}
+
+func (v *PostfixExpr) GetVal() string {
+	return fmt.Sprintf("%s, %s", v.Val.GetVal(), v.Operator.String())
 }
