@@ -1,0 +1,19 @@
+//fun again() {
+//    print "hey"
+//}
+var hello = "10"
+
+// How to use vars for a scope in a different way
+var i = 0
+
+for i in [1,2,3] {
+
+}
+
+// What can happen
+- Create: var i; Declare its existance and type
+- Assign: i = 0: Assign its value. This can only be done after it has been declared it exists
+- AssignCreate: var i = 0; Initialize. Declare and Assign in one step
+- Mutate: i = 2
+- Delete: del i
+- Use: print i

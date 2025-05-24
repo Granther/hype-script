@@ -1,0 +1,7 @@
+
+// Uses Print by default, but what about stderr? 
+// Separate arg for stderr? Separate command on 
+// Should built in keywords really be relied upon?
+fun stdout() 
+
+fun stderr()

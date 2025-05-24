@@ -33,6 +33,7 @@ type While struct {
 	Body      Stmt
 }
 
+
 type Fun struct {
 	Params      []token.Token
 	Name        token.Token

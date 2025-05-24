@@ -1,13 +1,15 @@
 package scanner
 
 import (
+	"fmt"
 	herror "hype-script/internal/error"
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
 	"strconv"
 )
 
-// Whats wrong with putting all tokens in a hashtable
+// Whats wrong with putting all tokens in a hashtable?
+// What about accounting for END? Should we leave that up to the Parser?
 
 type Scanner struct {
 	Source        string
@@ -40,6 +42,11 @@ func (s *Scanner) ScanTokens(source string) ([]token.Token, error) {
 	for !s.isAtEnd() {
 		s.Start = s.Current
 		s.scanToken()
+	}
+
+	// We as the scanner performed our job, just return 0 toks
+	if len(s.Tokens) == 0 {
+		return s.Tokens, nil
 	}
 
 	if s.Tokens[len(s.Tokens)-1].Type != token.END {
@@ -246,12 +253,15 @@ func (s *Scanner) string() {
 		s.advance()
 	}
 
-	s.advance()
+	//s.advance()
 
 	if s.isAtEnd() { // If it makes it to the end of line before finding closing "
+		fmt.Println("we at end")
 		herror.ScannerError(s.Line, "Unterminated string")
 		return
 	}
+
+	s.advance()
 
 	// s.Current is one less than the closing ", make Current into "
 	// s.advance()

@@ -158,6 +158,8 @@ func BuildKeywords() (keywords map[string]TokenType) {
 	keywords["return"] = RETURN
 	keywords["true"] = TRUE
 	keywords["while"] = WHILE
+	keywords["fun"] = FUN
+	keywords["var"] = VAR
 	keywords["par"] = PAR
 	keywords["hyp"] = HYP
 	return

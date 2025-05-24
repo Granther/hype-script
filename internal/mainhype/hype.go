@@ -84,10 +84,11 @@ func (g *Hype) Run(source string) error {
 
 	statements := g.Parser.Parse(tokens)
 	// Debug to see statement info
-	for _, stmt := range statements {
-		fmt.Printf("%s\n", stmt.String())
-	}
-
+	// for _, stmt := range statements {
+	// 	fmt.Printf("%s\n", stmt.String())
+	// }
+	//fmt.Printf("Num stmts: %d\n", len(statements))
+	
 	if g.Parser.GetHadError() {
 		fmt.Println("Error encountered in Parser, stopping...")
 		return nil

@@ -1,2 +1,7 @@
-
 pub do_thing()
+//{
+//    print "olah from func"
+//}
+// Lets think about this
+// When we have a newline, it is similar to a ;
+// So END should only appear when a newline appears
