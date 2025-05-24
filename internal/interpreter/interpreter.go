@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"fmt"
+	"hype-script/internal/environment"
 	herror "hype-script/internal/error"
 	"hype-script/internal/glorpups"
 	"hype-script/internal/token"
@@ -30,26 +31,31 @@ type Interpreter struct {
 }
 
 func NewInterpreter(env types.Environment) types.Interpreter {
-	// globals := environment.NewEnvironment(nil)
+	// Acts as its own env
+	globals := env
 	// globals.Define("clock", native.NewClockCallable())
 
 	return &Interpreter{
 		// Pass nil because we want this to point to the global scope
-		Globals:         env,
-		Environment:     env,
+		Globals:         globals,
+		Environment:     environment.NewEnvironment(globals),
 		HadRuntimeError: false,
 	}
 }
 
 func (i *Interpreter) Interpret(stmts []types.Stmt) {
+	// for _, stmt := range stmts {
+	// 	switch stmt.(type) {
+	// 	case *types.Var:
+	// 		i.execute(stmt)
+	// 	case *types.Fun:
+	// 		i.execute(stmt)
+	// 	}
+	// }
+
+	// Execute all statements, statements control Env
 	for _, stmt := range stmts {
 		i.execute(stmt)
-		// switch stmt.(type) {
-		// case *types.Var:
-		// 	i.execute(stmt)
-		// case *types.Fun:
-		// 	i.execute(stmt)
-		// }
 	}
 
 	// g, err := i.Environment.Get("mlorp")

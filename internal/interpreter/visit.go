@@ -121,6 +121,8 @@ func (i *Interpreter) VisitUnaryExpr(expr *types.UnaryExpr) (any, error) {
 		if ok {
 			return -val, nil
 		}
+	case token.KARAT:
+		fmt.Println("Got karat")
 	}
 
 	return utils.Parenthesize(i, expr.Operator.Lexeme, expr.Right)
@@ -250,7 +252,13 @@ func (i *Interpreter) VisitVarStmt(stmt *types.Var) error {
 	// A variable without an initializer is declared but NOT assigned, error to access before assignment
 	// But here, we auto assign the var to nil
 	// Give variable value
-	i.Environment.Define(stmt.Name.Lexeme, val)
+
+	if stmt.Global {
+		i.Globals.Define(stmt.Name.Lexeme, val)
+	} else {
+		i.Environment.Define(stmt.Name.Lexeme, val)
+	}
+
 	return nil
 }
 

@@ -17,3 +17,28 @@ for i in [1,2,3] {
 - Mutate: i = 2
 - Delete: del i
 - Use: print i
+
+
+// wont work
+foo()
+
+// will work
+bar()
+
+fun foo() {
+    print "foo"
+}
+
+// Karat moves it to global scope
+fun ^bar() {
+    print "bar"
+}
+
+// Tilde moves to top-to-bottom scope
+bar = ~bar
+
+// will work, cause is declared in top-to-bottom scope
+foo()
+
+var i = 0
+i = ^i

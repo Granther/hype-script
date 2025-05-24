@@ -16,6 +16,7 @@ type Print struct {
 type Var struct {
 	Name        token.Token
 	Initializer Expr
+	Global      bool
 }
 
 type Block struct {
@@ -32,7 +33,6 @@ type While struct {
 	Condition Expr
 	Body      Stmt
 }
-
 
 type Fun struct {
 	Params      []token.Token
@@ -95,10 +95,11 @@ func NewExpression(expr Expr) Stmt {
 	}
 }
 
-func NewVar(name token.Token, initializer Expr) Stmt {
+func NewVar(name token.Token, initializer Expr, global bool) Stmt {
 	return &Var{
 		Name:        name,
 		Initializer: initializer,
+		Global:      global,
 	}
 }
 

@@ -58,3 +58,7 @@ func (e *Environment) Assign(name token.Token, val any) error {
 func (e *Environment) String() string {
 	return fmt.Sprintf("%v", e.Values)
 }
+
+
+// Need to be able to remove from env and add to another simo
+// We hoist up and down an env when we see 

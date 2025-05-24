@@ -24,7 +24,8 @@ const (
 	STAR
 	END
 	SPACE
-	TILDE
+	TILDE // ~
+	KARAT // ^
 
 	// One or two character tokens.
 	BANG       // !
@@ -87,6 +88,7 @@ var TokenTypeNames = map[TokenType]string{
 	SPACE:         "SPACE",
 	TILDE:         "TILDE",
 	TILDE_EQUAL:   "TILDE_EQUAL",
+	KARAT:         "KARAT",
 	BANG:          "BANG",
 	BANG_EQUAL:    "BANG_EQUAL",
 	EQUAL:         "EQUAL",
@@ -173,5 +175,6 @@ func BuildLeftOper() (leftOperators map[rune]TokenType) {
 	leftOperators['/'] = SLASH
 	leftOperators['='] = EQUAL
 	leftOperators['~'] = TILDE
+	leftOperators['^'] = KARAT
 	return
 }

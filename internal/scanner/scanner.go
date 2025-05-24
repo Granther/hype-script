@@ -146,6 +146,8 @@ func (s *Scanner) scanToken() {
 		} else {
 			s.addSimpleToken(token.LESS)
 		}
+	case '^':
+		s.addSimpleToken(token.KARAT)
 	case '!': // Are we looking at a lexeme of ! OR !=
 		if s.match('=') {
 			s.addSimpleToken(token.BANG_EQUAL)

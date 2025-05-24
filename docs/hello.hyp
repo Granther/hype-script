@@ -1,3 +1,2 @@
-var hello = "10"
-print hello
-print "ok"
+print num
+var ^num = 100

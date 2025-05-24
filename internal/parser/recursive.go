@@ -77,6 +77,13 @@ func (p *Parser) funDeclaration() (types.Stmt, error) {
 // So we must define each func within the
 
 func (p *Parser) varDeclaration() (types.Stmt, error) {
+	var global bool 
+	if p.match(token.KARAT) {
+		global = true
+	} else if p.match(token.TILDE) {
+		global = false
+	}
+
 	// Consume name only if the next token is an ident
 	name, err := p.consume(token.IDENTIFIER, "Expect variable name.")
 	if err != nil {
@@ -97,7 +104,7 @@ func (p *Parser) varDeclaration() (types.Stmt, error) {
 		return nil, err
 	}
 
-	return types.NewVar(name, initializer), nil
+	return types.NewVar(name, initializer, global), nil
 	// If = does not exist in decl, is empty decl, pass empty initial to var decl
 }
 
@@ -315,7 +322,7 @@ func (p *Parser) factor() (types.Expr, error) {
 }
 
 func (p *Parser) unary() (types.Expr, error) {
-	if p.match(token.BANG, token.MINUS) { // If it is ! or -, must be unary
+	if p.match(token.BANG, token.MINUS, token.KARAT, token.TILDE) { // If it is ! or -, must be unary
 		operator := p.previous()
 		right, err := p.unary() // Parse recursively, ie, !!
 		if err != nil {

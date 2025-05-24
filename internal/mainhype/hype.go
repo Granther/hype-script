@@ -88,7 +88,7 @@ func (g *Hype) Run(source string) error {
 	// 	fmt.Printf("%s\n", stmt.String())
 	// }
 	//fmt.Printf("Num stmts: %d\n", len(statements))
-	
+
 	if g.Parser.GetHadError() {
 		fmt.Println("Error encountered in Parser, stopping...")
 		return nil
