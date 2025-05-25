@@ -16,3 +16,16 @@ import hyp (
 
 count(fmt.Sprintf(%s\n, "Hello"))
 """
+
+- Basically conditional hoisting
+    - Go through all func and var defs and define them
+    - If a statement moves a var to a new env then hoist it
+    - But if it does not, dont
+
+### Par-For
+- Parallel for loop
+- Every 'iteration' that would be, gets a goroutine
+
+### Lazy Auto-Par
+- Runs things in parallel only if they can be
+- Otherwise runs them in single main thread

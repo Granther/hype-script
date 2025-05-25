@@ -240,6 +240,7 @@ func (i *Interpreter) VisitPrintStmt(stmt *types.Print) error {
 	return nil
 }
 
+// var x = 10
 func (i *Interpreter) VisitVarStmt(stmt *types.Var) error {
 	var val any
 	var err error
@@ -254,7 +255,8 @@ func (i *Interpreter) VisitVarStmt(stmt *types.Var) error {
 	// Give variable value
 
 	if stmt.Global {
-		i.Globals.Define(stmt.Name.Lexeme, val)
+		// We must do first pass to hoist globals
+		i.Environment.Define(stmt.Name.Lexeme, val)
 	} else {
 		i.Environment.Define(stmt.Name.Lexeme, val)
 	}

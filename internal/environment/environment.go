@@ -59,6 +59,19 @@ func (e *Environment) String() string {
 	return fmt.Sprintf("%v", e.Values)
 }
 
+func (e *Environment) Remove(name string) {
+	delete(e.Values, name)
+}
+
+func (e *Environment) DefineAbove(name string, val any) error {
+	// Ensure above env exists
+	if e.Enlcosing == nil {
+		return fmt.Errorf("unable to define var %s to enclosing env", name)
+	}
+	// Define
+	e.Enlcosing.Define(name, val)
+	return nil
+}
 
 // Need to be able to remove from env and add to another simo
-// We hoist up and down an env when we see 
+// We hoist up and down an env when we see

@@ -193,7 +193,6 @@ func (p *Parser) assignment() (types.Expr, error) {
 	}
 
 	if p.match(token.EQUAL) {
-		// equals := p.previous()
 		if val, err = p.assignment(); err != nil {
 			return nil, err
 		}

@@ -2,7 +2,6 @@ package interpreter
 
 import (
 	"fmt"
-	"hype-script/internal/environment"
 	herror "hype-script/internal/error"
 	"hype-script/internal/glorpups"
 	"hype-script/internal/token"
@@ -24,6 +23,127 @@ import (
 // Operands of + are always an expression, the HAVE to have a value
 // The body of a while loop is a statement, but, that statement can BE an expression
 
+// Interpreter for non-linear language
+// Code is run from top to bottom as interpretted
+// But certain code has a heirarchy
+
+// 1. Setup: Define, skip Expressions 
+// 2. Eval: Express, skip Define
+
+var x = 10
+x + y // Fails if y is not hoisted
+var ^y // Define as y-up
+y = 1 // y is still ^. Assign y-up to 1
+y = ~y // y is no longer hoisted
+
+// x + y is only valid if x == 10, but down here. 
+// So x + y would still be invalid
+if x == 10 {
+	// Define it now, but dont submit till condition evals
+	// This changes the state of the program
+	y = ^y // See this as assign not define
+}
+
+print z // Cant print z
+print t // Can print t, but only if x == 10
+if x == 10 {
+	var z = 2
+	var ^t = 3
+}
+
+// In a regular lang, you cannot reference a var before assignment without it being in scope (either in a hierarchy, or being hoisted)
+// I want to be able to reference a var from a lower scope 
+
+print ~g // Basically says "Wait for g to be in scope"
+{
+	for i in l {
+		if i == 2 {
+			var ^g = "done"
+		}
+	}
+}
+
+// foo is skipped until a becomes ready. As signified by the ~
+foo(~a)
+bar(~a)
+zee(~b)
+
+if x {
+	a = ^io()
+}
+// a is set to result of io(), but then turned to a scope UP
+
+l := [1, 2, 3, 4, 5, 6, 7, 8]
+n := []
+for _, item := range l {
+	if item % 2 == 0 {
+		n = append(item, n)
+	}
+}
+
+l := [1, 2, 3, 4, 5, 6, 7, 8]
+n := []
+parfor item in l {
+	if item % 2 == 0 {
+		n.append(item)
+	}
+}
+
+l := [1, 2, 3, 4, 5, 6, 7, 8]
+n := []
+~item -> { n.append(item) } // Ran in goroutine
+parfor item in l {
+	if item % 2 == 0 {
+		^item
+	}
+}
+
+// Why not just wait for 
+
+// What if things happen async like
+// 
+// test.hyp
+// { 
+// l = [1, 2, 3]
+// print g 
+//
+// for i in l {
+//   if i == 2 {
+//     
+//     }
+//   }
+// }
+
+// Define x
+// Skip x+y
+// Define y in global
+
+// 2. Eval
+
+// Skip x
+// Eval x + y
+// Skip y
+
+// x+y is still valid because y = ~y was an expression and expressions ae interpretted but definitions are not
+// x+y is invalid because y = ~y is a definition and defines are absolute
+
+// What if every line is an expression
+// Define x
+// x + y is not valid
+// Define y
+
+// Define x
+// Define y in global
+// x + y is valid 
+
+// Inter-Comp
+// Hoist all defines that need it 
+// Then eval all expressions
+
+// Setup
+// Visit all stmts that are Var
+// 
+
 type Interpreter struct {
 	HadRuntimeError bool
 	Globals         types.Environment
@@ -31,14 +151,16 @@ type Interpreter struct {
 }
 
 func NewInterpreter(env types.Environment) types.Interpreter {
-	// Acts as its own env
-	globals := env
+	// Acts as its own env, globals is the ROOT env that everything inherits from
+	// globals := env
 	// globals.Define("clock", native.NewClockCallable())
 
 	return &Interpreter{
 		// Pass nil because we want this to point to the global scope
-		Globals:         globals,
-		Environment:     environment.NewEnvironment(globals),
+		// Globals:         globals,
+		Environment: env, // ROOT of all envs
+		//Environment:     environment.NewEnvironment(globals),
+		// Inherits from
 		HadRuntimeError: false,
 	}
 }
