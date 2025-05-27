@@ -29,3 +29,11 @@ count(fmt.Sprintf(%s\n, "Hello"))
 ### Lazy Auto-Par
 - Runs things in parallel only if they can be
 - Otherwise runs them in single main thread
+
+### What if Go was a Scripting Language
+- Similar syntax
+- Easily run console commands
+- Interpretted
+- Has some quirks
+- Uses Go types and libraries. This means we can use Go functions, consts, etc... in Hype-Script
+- No main func

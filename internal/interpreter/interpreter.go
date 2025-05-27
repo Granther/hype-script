@@ -30,73 +30,73 @@ import (
 // 1. Setup: Define, skip Expressions 
 // 2. Eval: Express, skip Define
 
-var x = 10
-x + y // Fails if y is not hoisted
-var ^y // Define as y-up
-y = 1 // y is still ^. Assign y-up to 1
-y = ~y // y is no longer hoisted
+// var x = 10
+// x + y // Fails if y is not hoisted
+// var ^y // Define as y-up
+// y = 1 // y is still ^. Assign y-up to 1
+// y = ~y // y is no longer hoisted
 
-// x + y is only valid if x == 10, but down here. 
-// So x + y would still be invalid
-if x == 10 {
-	// Define it now, but dont submit till condition evals
-	// This changes the state of the program
-	y = ^y // See this as assign not define
-}
+// // x + y is only valid if x == 10, but down here. 
+// // So x + y would still be invalid
+// if x == 10 {
+// 	// Define it now, but dont submit till condition evals
+// 	// This changes the state of the program
+// 	y = ^y // See this as assign not define
+// }
 
-print z // Cant print z
-print t // Can print t, but only if x == 10
-if x == 10 {
-	var z = 2
-	var ^t = 3
-}
+// print z // Cant print z
+// print t // Can print t, but only if x == 10
+// if x == 10 {
+// 	var z = 2
+// 	var ^t = 3
+// }
 
-// In a regular lang, you cannot reference a var before assignment without it being in scope (either in a hierarchy, or being hoisted)
-// I want to be able to reference a var from a lower scope 
+// // In a regular lang, you cannot reference a var before assignment without it being in scope (either in a hierarchy, or being hoisted)
+// // I want to be able to reference a var from a lower scope 
 
-print ~g // Basically says "Wait for g to be in scope"
-{
-	for i in l {
-		if i == 2 {
-			var ^g = "done"
-		}
-	}
-}
+// print ~g // Basically says "Wait for g to be in scope"
+// {
+// 	for i in l {
+// 		if i == 2 {
+// 			var ^g = "done"
+// 		}
+// 	}
+// }
 
-// foo is skipped until a becomes ready. As signified by the ~
-foo(~a)
-bar(~a)
-zee(~b)
+// // foo is skipped until a becomes ready. As signified by the ~
+// foo(~a)
+// bar(~a)
+// zee(~b)
 
-if x {
-	a = ^io()
-}
-// a is set to result of io(), but then turned to a scope UP
+// if x {
+// 	a = ^io()
+// }
+// // a is set to result of io(), but then turned to a scope UP
 
-l := [1, 2, 3, 4, 5, 6, 7, 8]
-n := []
-for _, item := range l {
-	if item % 2 == 0 {
-		n = append(item, n)
-	}
-}
+// l := [1, 2, 3, 4, 5, 6, 7, 8]
+// n := []
+// for _, item := range l {
+// 	if item % 2 == 0 {
+// 		n = append(item, n)
+// 	}
+// }
 
-l := [1, 2, 3, 4, 5, 6, 7, 8]
-n := []
-parfor item in l {
-	if item % 2 == 0 {
-		n.append(item)
-	}
-}
+// l := [1, 2, 3, 4, 5, 6, 7, 8]
+// n := []
+// parfor item in l {
+// 	if item % 2 == 0 {
+// 		n.append(item)
+// 	}
+// }
 
-l := [1, 2, 3, 4, 5, 6, 7, 8]
-n := []
-~item -> { n.append(item) } // Ran in goroutine
-parfor item in l {
-	if item % 2 == 0 {
-		^item
-	}
-}
+// l := [1, 2, 3, 4, 5, 6, 7, 8]
+// n := []
+// ~item -> { n.append(item) } // Ran in goroutine
+// parfor item in l {
+// 	if item % 2 == 0 {
+// 		^item
+// 	}
+// }
 
 // Why not just wait for 
 

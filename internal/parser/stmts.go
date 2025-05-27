@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
 	"hype-script/internal/types"
@@ -81,27 +82,6 @@ func (p *Parser) returnStmt() (types.Stmt, error) {
 	return types.NewReturn(keyword, val), nil
 }
 
-// func (p *Parser) tryStmt() (types.Stmt, error) {
-// 	var woops types.Stmt
-// 	var wert token.Token
-
-// 	attempt, err := p.statement()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	// if p.match(token.WOOPS) {
-// 	// 	wert = p.advance()
-
-// 	// 	woops, err = p.statement()
-// 	// 	if err != nil {
-// 	// 		return nil, err
-// 	// 	}
-// 	// }
-
-// 	return types.NewTry(attempt, woops, wert), nil
-// }
-
 func (p *Parser) whileStmt() (types.Stmt, error) {
 	condition, err := p.expression()
 	if err != nil {
@@ -147,18 +127,6 @@ func (p *Parser) printStmt() (types.Stmt, error) {
 	return types.NewPrint(val), nil
 }
 
-// func (p *Parser) wertStmt() (types.Stmt, error) {
-// 	val, err := p.expression()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	_, err = p.consume(token.END, "Expect 'end' after wert statement.")
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return types.NewWert(val), nil
-// }
-
 func (p *Parser) exprStmt() (types.Stmt, error) {
 	val, err := p.expression()
 	if err != nil {
@@ -172,3 +140,74 @@ func (p *Parser) exprStmt() (types.Stmt, error) {
 	// }
 	return types.NewExpression(val), nil
 }
+
+func (p *Parser) importStmt() (types.Stmt, error) {
+	lang, err := p.consume(token.IDENTIFIER, "Expect identifier after import statement") // Either 'go' or 'hyp'
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = p.consume(token.LEFT_PAREN, "Expect '(' after import identifier")
+	if err != nil {
+		return nil, err
+	}
+	p.match(token.END) // Eat end after '(' if we need to
+
+	// Consume Idents and Strings until we see RIGHT_PAREN or don get
+	var imports []*types.ImportItem
+	for !p.match(token.RIGHT_PAREN) {
+		p.advance()            // Go forward one after checking it
+		switch p.peek().Type { // See if token we just advanced to is X
+		case token.IDENTIFIER: // if it is, set ident to current
+			ident := p.peek()
+			p.advance() // Move to next
+			item, err := p.consume(token.STRING, "Expect string import after alias")
+			if err != nil {
+				return nil, err
+			}
+			newImport := types.NewImportItem(ident, item)
+			imports = append(imports, newImport)
+		case token.STRING:
+			newImport := types.NewImportItem(p.peek(), p.peek())
+			p.advance()
+			imports = append(imports, newImport)
+		default:
+			return nil, fmt.Errorf("Expected string import item with optional identifier alias (time './time.hyp')")
+		}
+	}
+
+	return types.NewImport(lang, imports)
+}
+
+// func (p *Parser) wertStmt() (types.Stmt, error) {
+// 	val, err := p.expression()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	_, err = p.consume(token.END, "Expect 'end' after wert statement.")
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return types.NewWert(val), nil
+// }
+
+// func (p *Parser) tryStmt() (types.Stmt, error) {
+// 	var woops types.Stmt
+// 	var wert token.Token
+
+// 	attempt, err := p.statement()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	// if p.match(token.WOOPS) {
+// 	// 	wert = p.advance()
+
+// 	// 	woops, err = p.statement()
+// 	// 	if err != nil {
+// 	// 		return nil, err
+// 	// 	}
+// 	// }
+
+// 	return types.NewTry(attempt, woops, wert), nil
+// }

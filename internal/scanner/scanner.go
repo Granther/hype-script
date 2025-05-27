@@ -1,7 +1,6 @@
 package scanner
 
 import (
-	"fmt"
 	herror "hype-script/internal/error"
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
@@ -258,7 +257,6 @@ func (s *Scanner) string() {
 	//s.advance()
 
 	if s.isAtEnd() { // If it makes it to the end of line before finding closing "
-		fmt.Println("we at end")
 		herror.ScannerError(s.Line, "Unterminated string")
 		return
 	}

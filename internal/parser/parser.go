@@ -96,6 +96,7 @@ func (p *Parser) syncronize() {
 		case token.FUN:
 		case token.PAR:
 		case token.HYP:
+		case token.IMPORT:
 		case token.VAR:
 		case token.FOR:
 		case token.IF:

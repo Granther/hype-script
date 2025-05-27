@@ -1,0 +1,68 @@
+// Using golang libs
+import go (
+    "fmt"
+    "time"
+)
+
+// Using local .hyp files
+import hyp (
+    "./hello.hyp"
+    hyp-time "./time.hyp"
+)
+// Aliases work
+
+packages := "openvpn neovim"
+
+func down() {
+    stop_openvpn()
+
+    time.Sleep(1) // Uses func from go lib
+
+    // hyp block is like running hyp for each stmt in parallel
+    hyp {
+        del_routes() 
+        // What if one of these does something to a global var? 
+        // How do we stop race conditions?
+        // What if 2 of these funcs try to change 'packages'?
+        // Just lock 'packages' when something is trying to do something
+        // Unlock when its done, force other goroutine to wait 
+        stop_stunnel()
+        rm_dns()
+    }
+}
+
+
+switch 
+
+// NO ptrs!!
+// How?
+// Fuck it, every ptr turns into a real var UNLESS it has to
+// Lazy deref
+
+func get_input() {
+    var i int
+
+    fmt.Println("Num: ")
+    fmt.Scan(&i)
+    fmt.Println("Num is: ", i)
+}
+
+// I like this better
+// Hype sees if i exists when we see it used by Scan
+// It is not
+// Create it
+// Scan needs it as a reference
+func get_input2() {
+    // i not in scope, does not exist
+    // Ok, so we create i and pass it to Scan, but we pass it as a reference?
+    // So now every instance of i in the scope goes to that var?
+    // Is that not how we should already do it?
+    // 
+    fmt.Scan(i)
+    fmt.Println("Num is: ", i)
+}
+
+// What problems does this solve?
+// - Takes the edge off go
+// - Developers can use Go without having it be fancy about it
+// - Fleshed out, fast libraries can be used for scripting wihout compilation

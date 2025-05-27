@@ -138,6 +138,10 @@ func (p *Parser) statement() (types.Stmt, error) {
 		fmt.Println("Got HYP token")
 	}
 
+	if p.match(token.IMPORT) {
+		return p.importStmt()
+	}
+
 	// Start of block statement
 	if p.match(token.LEFT_BRACE) {
 		block, err := p.block()

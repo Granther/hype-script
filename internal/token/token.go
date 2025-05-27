@@ -122,6 +122,7 @@ var TokenTypeNames = map[TokenType]string{
 	SLASH_EQUAL:   "SLASH_EQUAL",
 	LEFT_BRACKET:  "LEFT_BRACKET",
 	RIGHT_BRACKET: "RIGHT_BRACKET",
+	IMPORT: "IMPORT",
 }
 
 type Token struct {
