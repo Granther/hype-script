@@ -125,6 +125,12 @@ var TokenTypeNames = map[TokenType]string{
 	IMPORT: "IMPORT",
 }
 
+var BadTokens = map[rune]bool{
+	' ': true, 
+	'\t': true, 
+	'\r': true,
+}
+
 type Token struct {
 	Type    TokenType
 	Lexeme  string
@@ -161,7 +167,7 @@ func BuildKeywords() (keywords map[string]TokenType) {
 	keywords["return"] = RETURN
 	keywords["true"] = TRUE
 	keywords["while"] = WHILE
-	keywords["fun"] = FUN
+	keywords["func"] = FUN
 	keywords["var"] = VAR
 	keywords["par"] = PAR
 	keywords["hyp"] = HYP

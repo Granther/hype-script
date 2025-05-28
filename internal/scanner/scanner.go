@@ -6,6 +6,7 @@ import (
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
 	"hype-script/internal/types/core"
+	"os"
 	"strconv"
 )
 
@@ -31,6 +32,7 @@ func NewScanner() core.ScannerHandler {
 		Tokens:        []token.Token{},
 		Start:         0,
 		Current:       0,
+		// GlobalCurrent: 0,
 		Line:          1,
 		Keywords:      keywords,
 		LeftOperators: leftOperators,
@@ -68,39 +70,25 @@ func (s *Scanner) isAtEnd() bool {
 	return s.Current >= len(s.Source)
 }
 
-// type RuneProcedure func()
-
-// func (s *Scanner) createProcMap() (procMap map[rune]RuneProcedure) {
-// 	procMap = make(map[rune]RuneProcedure)
-// 	procMap['('] = func() {
-// 		fmt.Println("hello")
-// 	}
-// 	return
-// }
-
 func (s *Scanner) scanToken() {
 	c := s.advance()
-
-	// fmt.Println(string(c))
 
 	switch c {
 	case '(':
 		s.addSimpleToken(token.LEFT_PAREN)
+		s.eatBad()
 	case ')':
 		s.addSimpleToken(token.RIGHT_PAREN)
-		if s.futureChar() == '}' {
-			s.addSimpleToken(token.END)
-		}
 	case '{':
 		s.addSimpleToken(token.LEFT_BRACE)
+		s.eatBad()
 	case '}':
 		s.addSimpleToken(token.RIGHT_BRACE)
-		// for s.peek() == ' ' {
-		// 	s.advance()
-		// }
-		// if s.peek() != '\n' {
-		// 	s.addSimpleToken(token.END)
-		// }
+	case '[':
+		s.addSimpleToken(token.LEFT_BRACKET)
+		s.eatBad()
+	case ']':
+		s.addSimpleToken(token.RIGHT_BRACKET)
 	case ',':
 		s.addSimpleToken(token.COMMA)
 	case '.':
@@ -121,8 +109,6 @@ func (s *Scanner) scanToken() {
 		} else {
 			s.addSimpleToken(token.PLUS)
 		}
-	case ';':
-		s.addSimpleToken(token.END)
 	case '*':
 		if s.match('=') {
 			s.addSimpleToken(token.STAR_EQUAL)
@@ -176,27 +162,25 @@ func (s *Scanner) scanToken() {
 			s.addSimpleToken(token.SLASH)
 		}
 	case ' ': // We are basically skipping these, no error, no op
-		fmt.Println("Got space")
 	case '\r':
-		fmt.Println("Got r")
 	case '\t': // Store them in linked list?
-		fmt.Println("Got tab")
-		// Ignore whitespace
 	case '\n': // Do nothing but start iterate to the next line
-		fmt.Println(string(s.prev()))
-		switch s.prev() {
-		case rune(token.LEFT_PAREN): // Skip adding token
+		s.Line += 1
+		// for s.match('\n') {
+		// 	s.Line += 1
+		// }
+		if s.prevToken().Type == token.END {
+			s.advance()
+			break
 		}
 		s.addSimpleToken(token.END)
-		s.Line += 1
-		for s.match('\n') {
+	case ';':
+		for s.peekNext() == '\n' {
 			s.Line += 1
+			s.advance()
 		}
-	case '[':
-		// s.glist()
-		s.addSimpleToken(token.LEFT_BRACKET)
-	case ']':
-		s.addSimpleToken(token.RIGHT_BRACKET)
+		s.addSimpleToken(token.END)
+		//s.eatBad()
 	case '"':
 		s.string()
 	default:
@@ -243,7 +227,31 @@ func (s *Scanner) futureChar() rune {
 	return p
 }
 
+// Eat 'char' if it is next, and continue to advance as it appears consectively
+func (s *Scanner) eatAll(char rune) {
+	fmt.Println(string(s.peekNext()))
+	for s.peekNext() == char {
+		fmt.Println("here")
+		s.advance()
+	}
+}
+
+func (s *Scanner) eatBad() {
+	for s.peek() == '\n' || s.peek() == '\r' || s.peek() == '\t' || s.peek() == ' ' {
+		s.advance()
+	}
+}
+
+func (s *Scanner) prevBy(back int) rune {
+	val := token.BadTokens[rune(s.Source[s.Current-back])]
+	if val { // Prev is bad tok
+		return s.prevBy(back + 1)
+	}
+	return rune(s.Source[s.Current-1])
+}
+
 func (s *Scanner) prev() rune {
+	//return s.prevBy(1)
 	return rune(s.Source[s.Current-1])
 }
 
@@ -304,6 +312,19 @@ func (s *Scanner) addToken(tokType token.TokenType, literal *literal.Literal) {
 	escapedText = escapedText[1 : len(escapedText)-1] // Remove the surrounding quotes added by QuoteToASCII
 	newToken := token.NewToken(tokType, escapedText, literal, s.Line)
 	s.Tokens = append(s.Tokens, *newToken)
+}
+
+func (s *Scanner) prevToken() token.Token {
+	return s.Tokens[len(s.Tokens)-1]
+}
+
+func (s *Scanner) prevTokenWas(tokType token.TokenType) bool {
+	fmt.Println("Current: ", s.Current)
+	os.Exit(1)
+	if s.Current >= s.Current-1 {
+		return s.Tokens[s.Current-1].Type == tokType
+	}
+	return false
 }
 
 func (s *Scanner) match(expected byte) bool {

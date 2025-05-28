@@ -22,7 +22,7 @@ func goo() {print "goo"} END
 func foo() {print "yo"} END
 // Works just as well as the first
 
-func zoo() { END
+func zoo() { END // No END if prev tok is LEFT_BRACE
     print "zoo" END
     END
     foo() END

@@ -1,10 +1,11 @@
 package parser
 
 import (
+	"errors"
+	"fmt"
 	herror "hype-script/internal/error"
 	"hype-script/internal/token"
 	"hype-script/internal/types"
-	"errors"
 )
 
 // Two jobs
@@ -62,6 +63,7 @@ func (p *Parser) ParseTokens(tokens []token.Token) []types.Stmt {
 		p.match(token.END)           // Consume endline token if its there
 		decl, err := p.declaration() // Decl is start of recursive statment parsing
 		if err != nil {
+			fmt.Println("Parser error: ", err.Error())
 			p.HadError = true
 			p.syncronize()
 			continue
@@ -148,6 +150,10 @@ func (p *Parser) peekNext() token.Token { // Returns current token we have yet t
 
 func (p *Parser) previous() token.Token {
 	return p.Tokens[p.Current-1]
+}
+
+func (p *Parser) previousNext() token.Token {
+	return p.Tokens[p.Current-2]
 }
 
 func (p *Parser) advance() token.Token { // Returns token that is consumed, s.Current-1

@@ -1,0 +1,10 @@
+import go (
+    "fmt"
+    "time"
+)
+
+fmt.Println("Hello")
+// See fmt in scope, in global,  
+
+t := time.Now()
+// 

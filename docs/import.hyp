@@ -1,5 +1,4 @@
-{
+import hype (
+"fmt"
 
-
-}
-import hype (yo "fmt")
+)

@@ -149,18 +149,16 @@ func (p *Parser) importStmt() (types.Stmt, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("For lang: ", lang.Lexeme)
 
 	_, err = p.consume(token.LEFT_PAREN, "Expect '(' after import identifier")
 	if err != nil {
 		return nil, err
 	}
-	p.match(token.END) // Eat end after '(' if we need to
+	//p.match(token.END) // Eat end after '(' if we need to
 
 	// Consume Idents and Strings until we see RIGHT_PAREN or don get
 	var imports []*types.ImportItem
 	for !p.match(token.RIGHT_PAREN) {
-		//p.advance()            // Go forward one after checking it
 		switch p.peek().Type { // See if token we just advanced to is X
 		case token.IDENTIFIER: // if it is, set ident to current
 			ident := p.peek()
@@ -169,19 +167,28 @@ func (p *Parser) importStmt() (types.Stmt, error) {
 			if err != nil {
 				return nil, err
 			}
+			p.advance()
+			_, err = p.consume(token.END, "Expect END after import item")
+			if err != nil {
+				return nil, err
+			}
 			newImport := types.NewImportItem(ident, item)
 			imports = append(imports, newImport)
-			// fmt.Println("New Import: ", newImport.Alias.Lexeme, newImport.Val.Lexeme)
 		case token.STRING:
-			newImport := types.NewImportItem(p.peek(), p.peek())
 			p.advance()
+			_, err = p.consume(token.END, "Expect END after import item")
+			if err != nil {
+				return nil, err
+			}
+			newImport := types.NewImportItem(p.previousNext(), p.previousNext())
 			imports = append(imports, newImport)
-			// fmt.Println("New Import: ", newImport.Alias.Lexeme, newImport.Val.Lexeme)
+		case token.END: // Advance cause we dont care
+			p.advance()
 		default:
 			return nil, fmt.Errorf("expected string import item with optional identifier alias (time './time.hyp')")
 		}
 	}
-	p.match(token.END)
+	p.match(token.END) 
 
 	return types.NewImport(lang, imports), nil
 }
