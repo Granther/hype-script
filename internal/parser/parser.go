@@ -50,7 +50,7 @@ func NewParser(e types.Environment) *Parser {
 }
 
 // Takes in parsed tokens from Scanner and outputs list of Statements
-func (p *Parser) Parse(tokens []token.Token) []types.Stmt {
+func (p *Parser) ParseTokens(tokens []token.Token) []types.Stmt {
 	p.Tokens = tokens
 	statements := []types.Stmt{}
 

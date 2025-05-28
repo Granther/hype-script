@@ -6,6 +6,7 @@ import (
 	"hype-script/internal/glorpups"
 	"hype-script/internal/token"
 	"hype-script/internal/types"
+	"hype-script/internal/types/core"
 	"hype-script/internal/utils"
 )
 
@@ -27,7 +28,7 @@ import (
 // Code is run from top to bottom as interpretted
 // But certain code has a heirarchy
 
-// 1. Setup: Define, skip Expressions 
+// 1. Setup: Define, skip Expressions
 // 2. Eval: Express, skip Define
 
 // var x = 10
@@ -36,7 +37,7 @@ import (
 // y = 1 // y is still ^. Assign y-up to 1
 // y = ~y // y is no longer hoisted
 
-// // x + y is only valid if x == 10, but down here. 
+// // x + y is only valid if x == 10, but down here.
 // // So x + y would still be invalid
 // if x == 10 {
 // 	// Define it now, but dont submit till condition evals
@@ -52,7 +53,7 @@ import (
 // }
 
 // // In a regular lang, you cannot reference a var before assignment without it being in scope (either in a hierarchy, or being hoisted)
-// // I want to be able to reference a var from a lower scope 
+// // I want to be able to reference a var from a lower scope
 
 // print ~g // Basically says "Wait for g to be in scope"
 // {
@@ -98,18 +99,18 @@ import (
 // 	}
 // }
 
-// Why not just wait for 
+// Why not just wait for
 
 // What if things happen async like
-// 
+//
 // test.hyp
-// { 
+// {
 // l = [1, 2, 3]
-// print g 
+// print g
 //
 // for i in l {
 //   if i == 2 {
-//     
+//
 //     }
 //   }
 // }
@@ -134,15 +135,15 @@ import (
 
 // Define x
 // Define y in global
-// x + y is valid 
+// x + y is valid
 
 // Inter-Comp
-// Hoist all defines that need it 
+// Hoist all defines that need it
 // Then eval all expressions
 
 // Setup
 // Visit all stmts that are Var
-// 
+//
 
 type Interpreter struct {
 	HadRuntimeError bool
@@ -150,7 +151,7 @@ type Interpreter struct {
 	Environment     types.Environment
 }
 
-func NewInterpreter(env types.Environment) types.Interpreter {
+func NewInterpreter(env types.Environment) core.InterpreterHandler {
 	// Acts as its own env, globals is the ROOT env that everything inherits from
 	// globals := env
 	// globals.Define("clock", native.NewClockCallable())
@@ -165,7 +166,7 @@ func NewInterpreter(env types.Environment) types.Interpreter {
 	}
 }
 
-func (i *Interpreter) Interpret(stmts []types.Stmt) {
+func (i *Interpreter) InterpretStmts(stmts []types.Stmt) {
 	// for _, stmt := range stmts {
 	// 	switch stmt.(type) {
 	// 	case *types.Var:

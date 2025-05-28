@@ -5,11 +5,12 @@ import (
 	herror "hype-script/internal/error"
 	"hype-script/internal/environment"
 	"hype-script/internal/types"
+	"hype-script/internal/types/core"
 )
 
 type Callable interface {
 	Arity() int
-	Call(interpreter types.Interpreter, args []any) (any, error)
+	Call(interpreter core.InterpreterHandler, args []any) (any, error)
 	String() string
 }
 
@@ -26,7 +27,7 @@ func NewGlorpFunction(declaration types.Fun) Callable {
 // Each function gets its own environment to store local vars
 // A new environment is necassary when thinking about recursive funs
 // They do not share local vars
-func (f *GlorpFunction) Call(interpreter types.Interpreter, args []any) (any, error) {
+func (f *GlorpFunction) Call(interpreter core.InterpreterHandler, args []any) (any, error) {
 	environment := environment.NewEnvironment(interpreter.GetGlobals())
 	for i := 0; i < len(f.Declaration.Params); i++ {
 		// Place passed args as accessible in the body locally

@@ -7,7 +7,7 @@ import (
 
 func TestPeek(t *testing.T) {
 	source := "var x = 42"
-	scanner := NewScanner()
+	scanner := &Scanner{}
 	scanner.Source = source
 
 	// Test initial peek
@@ -37,7 +37,7 @@ func TestPeek(t *testing.T) {
 func TestNumber(t *testing.T) {
 	source1 := "100"
 	source2 := "20.4"
-	scanner := NewScanner()
+	scanner := &Scanner{}
 
 	scanner.Source = source1
 	scanner.number()
@@ -60,7 +60,7 @@ func TestNumber(t *testing.T) {
 
 func TestFutureChar(t *testing.T) {
 	source := "     }"
-	scanner := NewScanner()
+	scanner := &Scanner{}
 	scanner.Source = source
 
 	if scanner.futureChar() != '}' {
