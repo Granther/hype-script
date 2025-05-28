@@ -11,13 +11,14 @@ import (
 	"hype-script/internal/scanner"
 	"hype-script/internal/token"
 	"hype-script/internal/types"
+	"hype-script/internal/types/core"
 )
 
 type Hype struct {
 	HadError    bool
-	Scanner     *scanner.Scanner
-	Parser      types.Parser
-	Interpreter types.Interpreter
+	Scanner     core.ScannerHandler
+	Parser      core.ParserHandler
+	Interpreter core.InterpreterHandler
 	Environment types.Environment
 }
 

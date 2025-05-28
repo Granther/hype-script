@@ -46,6 +46,11 @@ type Return struct {
 	Val     Expr
 }
 
+type Import struct {
+	Lang    token.Token
+	Imports []*ImportItem
+}
+
 func NewReturn(keyword token.Token, val Expr) Stmt {
 	return &Return{
 		Keyword: keyword,
@@ -103,6 +108,13 @@ func NewVar(name token.Token, initializer Expr, global bool) Stmt {
 	}
 }
 
+func NewImport(lang token.Token, imports []*ImportItem) Stmt {
+	return &Import{
+		Lang:    lang,
+		Imports: imports,
+	}
+}
+
 func (e *Print) Accept(visitor StmtVisitor) error {
 	return visitor.VisitPrintStmt(e)
 }
@@ -133,6 +145,10 @@ func (e *Fun) Accept(visitor StmtVisitor) error {
 
 func (e *Return) Accept(visitor StmtVisitor) error {
 	return visitor.VisitReturnStmt(e)
+}
+
+func (e *Import) Accept(visitor StmtVisitor) error {
+	return visitor.VisitImportStmt(e)
 }
 
 // String()
@@ -167,4 +183,8 @@ func (e *Fun) String() string {
 
 func (e *Return) String() string {
 	return fmt.Sprintf("%s, %s", e.Val.GetType(), e.Val.GetVal())
+}
+
+func (e *Import) String() string {
+	return ""
 }

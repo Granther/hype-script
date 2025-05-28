@@ -1,0 +1,42 @@
+// We have 
+
+func foo() { END
+    print "yo" END
+} END
+END
+END
+END
+func goo() {print "goo"} END
+
+ |
+ V
+
+func foo() {print "yo"} END
+func goo() {print "goo"} END
+
+// When do we care about these?
+// Only when they end something important
+// So print "yo" has to have an END so we know its done
+// We dont care when multiple ENDS exist at all, we never care about END END, all ENDs in greater quantities than 1 can be 1. And all that are 0 remain 0
+
+func foo() {print "yo"} END
+// Works just as well as the first
+
+func zoo() { END
+    print "zoo" END
+    END
+    foo() END
+    END
+    if x { END
+        print "x" END
+    } END
+} END
+
+func zoo() { print "zoo" END foo() END if x { print "x" } }
+
+import hype ( END
+    "fmt" END
+    yo "time" END
+) END
+
+import hype ( "fmt" END yo "time" )

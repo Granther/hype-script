@@ -1,7 +1,5 @@
-import go (
-    "fmt"
-)
+{
 
-import hyp (
-    "./hello.hyp"
-)
+
+}
+import hype (yo "fmt")

@@ -141,11 +141,15 @@ func (p *Parser) exprStmt() (types.Stmt, error) {
 	return types.NewExpression(val), nil
 }
 
+// import go ("fmt")
+// import hyp (time "./time.hyp")
+// Notice the alias
 func (p *Parser) importStmt() (types.Stmt, error) {
 	lang, err := p.consume(token.IDENTIFIER, "Expect identifier after import statement") // Either 'go' or 'hyp'
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("For lang: ", lang.Lexeme)
 
 	_, err = p.consume(token.LEFT_PAREN, "Expect '(' after import identifier")
 	if err != nil {
@@ -156,7 +160,7 @@ func (p *Parser) importStmt() (types.Stmt, error) {
 	// Consume Idents and Strings until we see RIGHT_PAREN or don get
 	var imports []*types.ImportItem
 	for !p.match(token.RIGHT_PAREN) {
-		p.advance()            // Go forward one after checking it
+		//p.advance()            // Go forward one after checking it
 		switch p.peek().Type { // See if token we just advanced to is X
 		case token.IDENTIFIER: // if it is, set ident to current
 			ident := p.peek()
@@ -167,17 +171,23 @@ func (p *Parser) importStmt() (types.Stmt, error) {
 			}
 			newImport := types.NewImportItem(ident, item)
 			imports = append(imports, newImport)
+			// fmt.Println("New Import: ", newImport.Alias.Lexeme, newImport.Val.Lexeme)
 		case token.STRING:
 			newImport := types.NewImportItem(p.peek(), p.peek())
 			p.advance()
 			imports = append(imports, newImport)
+			// fmt.Println("New Import: ", newImport.Alias.Lexeme, newImport.Val.Lexeme)
 		default:
-			return nil, fmt.Errorf("Expected string import item with optional identifier alias (time './time.hyp')")
+			return nil, fmt.Errorf("expected string import item with optional identifier alias (time './time.hyp')")
 		}
 	}
+	p.match(token.END)
 
-	return types.NewImport(lang, imports)
+	return types.NewImport(lang, imports), nil
 }
+
+// Expression (x + y) We are expressing some type of action. Must evaluate to a value
+// Stmt, so an import is a type of statement. We are stating that this is happening
 
 // func (p *Parser) wertStmt() (types.Stmt, error) {
 // 	val, err := p.expression()

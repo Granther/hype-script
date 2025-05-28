@@ -180,6 +180,10 @@ func (i *Interpreter) VisitReturnExpr(expr *types.ReturnExpr) (any, error) {
 	return nil, nil
 }
 
+func (i *Interpreter) VisitImportExpr(expr *types.ImportExpr) (any, error) {
+	return nil, nil
+}
+
 func (i *Interpreter) VisitCallExpr(expr *types.CallExpr) (any, error) {
 	callee, err := i.evaluate(expr.Callee)
 	if err != nil {
@@ -310,6 +314,11 @@ func (i *Interpreter) VisitIfStmt(stmt *types.If) error {
 	} else if stmt.Final != nil { // Final (else keyword is taken in Go)
 		i.execute(stmt.Final)
 	}
+	return nil
+}
+
+func (i *Interpreter) VisitImportStmt(expr *types.Import) error {
+	fmt.Println("Visited import stmt in inter")
 	return nil
 }
 

@@ -1,9 +1,11 @@
 package scanner
 
 import (
+	"fmt"
 	herror "hype-script/internal/error"
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
+	"hype-script/internal/types/core"
 	"strconv"
 )
 
@@ -20,7 +22,7 @@ type Scanner struct {
 	LeftOperators map[rune]token.TokenType
 }
 
-func NewScanner() *Scanner {
+func NewScanner() core.ScannerHandler {
 	// Map of string to token.ITEM
 	keywords := token.BuildKeywords()
 	leftOperators := token.BuildLeftOper()
@@ -174,10 +176,17 @@ func (s *Scanner) scanToken() {
 			s.addSimpleToken(token.SLASH)
 		}
 	case ' ': // We are basically skipping these, no error, no op
+		fmt.Println("Got space")
 	case '\r':
-	case '\t':
+		fmt.Println("Got r")
+	case '\t': // Store them in linked list?
+		fmt.Println("Got tab")
 		// Ignore whitespace
 	case '\n': // Do nothing but start iterate to the next line
+		fmt.Println(string(s.prev()))
+		switch s.prev() {
+		case rune(token.LEFT_PAREN): // Skip adding token
+		}
 		s.addSimpleToken(token.END)
 		s.Line += 1
 		for s.match('\n') {
