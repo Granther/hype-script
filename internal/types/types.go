@@ -38,6 +38,7 @@ type StmtVisitor interface {
 	VisitFunStmt(stmt *Fun) error
 	VisitReturnStmt(stmt *Return) error
 	VisitImportStmt(stmt *Import) error
+	VisitAccessStmt(stmt *Access) error
 }
 
 type Visitor interface {
@@ -57,6 +58,7 @@ type Visitor interface {
 	VisitGlistExpr(expr *GlistExpr) (any, error)
 	VisitIndexExpr(expr *IndexExpr) (any, error)
 	VisitImportExpr(expr *ImportExpr) (any, error)
+	VisitAccessExpr(expr *AccessExpr) (any, error)
 }
 
 type Expr interface {

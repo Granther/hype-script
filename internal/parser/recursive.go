@@ -446,11 +446,20 @@ func (p *Parser) primary() (types.Expr, error) {
 
 	// If we see an ident
 	if p.match(token.IDENTIFIER) {
-		// if p.match(token.DOT) {
-
-		// }
-		return types.NewVarExpr(p.previous()), nil
+		prev := p.previous()
+		if p.match(token.DOT) {
+			expr, err := p.expression()
+			if err != nil {
+				return nil, fmt.Errorf("exprected expression after DOT")
+			}
+			return types.NewAccessExpr(prev, expr), nil
+		}
+		return types.NewVarExpr(prev), nil
+		// Catch keyword "fmt" and everything else is Literal for yaegi
 	}
+
+	// fmt.Println.Thing
+	// IDENT DOT IDENT DOT IDENT
 
 	if p.match(token.LEFT_PAREN) {
 		expr, err := p.expression()

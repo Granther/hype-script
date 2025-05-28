@@ -51,6 +51,11 @@ type Import struct {
 	Imports []*ImportItem
 }
 
+type Access struct {
+	Name    token.Token
+	Expr 	Expr
+}
+
 func NewReturn(keyword token.Token, val Expr) Stmt {
 	return &Return{
 		Keyword: keyword,
