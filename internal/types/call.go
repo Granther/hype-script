@@ -30,5 +30,6 @@ func (v *CallExpr) GetType() string {
 }
 
 func (v *CallExpr) GetVal() string {
-	return fmt.Sprintf("%s", v.Callee.GetVal())
+	fmt.Println("Got getval")
+	return v.Callee.GetVal()
 }

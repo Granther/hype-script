@@ -15,4 +15,3 @@ func NewLiteral(val any) *Literal {
 func (l *Literal) String() string {
 	return fmt.Sprintf("%v", l.Val)
 }
-

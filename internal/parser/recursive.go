@@ -7,6 +7,7 @@ import (
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
 	"hype-script/internal/types"
+	"os"
 )
 
 // Called repeatably to parse a series of statments in a program, perfect place to look for panic
@@ -77,7 +78,7 @@ func (p *Parser) funDeclaration() (types.Stmt, error) {
 // So we must define each func within the
 
 func (p *Parser) varDeclaration() (types.Stmt, error) {
-	var global bool 
+	var global bool
 	if p.match(token.KARAT) {
 		global = true
 	} else if p.match(token.TILDE) {
@@ -380,7 +381,7 @@ func (p *Parser) finishCall(callee types.Expr) (types.Expr, error) {
 
 	// What happens when foo(
 	// If right paren is not there we assume params
-	// 
+	//
 	if !p.check(token.RIGHT_PAREN) { // If we dont see right paren as we are walking the args
 		for {
 			if len(args) >= 255 {
@@ -448,11 +449,28 @@ func (p *Parser) primary() (types.Expr, error) {
 	if p.match(token.IDENTIFIER) {
 		prev := p.previous()
 		if p.match(token.DOT) {
-			expr, err := p.expression()
-			if err != nil {
-				return nil, fmt.Errorf("exprected expression after DOT")
+			exprs := []types.Expr{}
+			for !p.match(token.END) {
+				e, err := p.expression()
+				//v, err := p.consume(token.IDENTIFIER, "Expected Ident after DOT")
+				if err != nil {
+					return nil, err
+				}
+				// IDENT DOT IDENT END
+				// println . go END
+				p.match(token.DOT)
+				exprs = append(exprs, e)
 			}
-			return types.NewAccessExpr(prev, expr), nil
+			fmt.Println("Exprs...")
+			for _, item := range exprs {
+				item.GetVal()
+			}
+			os.Exit(1)
+			// expr, err := p.expression()
+			// if err != nil {
+			// 	return nil, fmt.Errorf("exprected expression after DOT")
+			// }
+			//return types.NewAccessExpr(prev, exprs), nil
 		}
 		return types.NewVarExpr(prev), nil
 		// Catch keyword "fmt" and everything else is Literal for yaegi

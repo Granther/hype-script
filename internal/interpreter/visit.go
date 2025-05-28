@@ -398,3 +398,17 @@ func (i *Interpreter) VisitLogicalExpr(expr *types.LogicalExpr) (any, error) {
 	// If and: left is true
 	return i.evaluate(expr.Right)
 }
+
+func (i *Interpreter) VisitAccessExpr(expr *types.AccessExpr) (any, error) { 
+	if expr.Name.Lexeme == "fmt" {
+		fmt.Println("Going to run: ", expr.Expr.GetVal())
+		
+	}
+	//fmt.Println("Visit access Expr")
+	return nil, nil 
+}
+
+func (i *Interpreter) VisitAccessStmt(expr *types.Access) error { 
+	fmt.Println("Visit access Stmt")
+	return nil 
+}

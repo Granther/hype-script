@@ -122,12 +122,12 @@ var TokenTypeNames = map[TokenType]string{
 	SLASH_EQUAL:   "SLASH_EQUAL",
 	LEFT_BRACKET:  "LEFT_BRACKET",
 	RIGHT_BRACKET: "RIGHT_BRACKET",
-	IMPORT: "IMPORT",
+	IMPORT:        "IMPORT",
 }
 
 var BadTokens = map[rune]bool{
-	' ': true, 
-	'\t': true, 
+	' ':  true,
+	'\t': true,
 	'\r': true,
 }
 
@@ -149,7 +149,11 @@ func NewToken(tokType TokenType, lexeme string, literal *literal.Literal, line i
 
 // Gives the token type, string value used to identify it, and literal val
 func (t *Token) String() string {
-	return fmt.Sprintf("%d %s %s", t.Type, t.Lexeme, t.Literal.String())
+	lit := "nil"
+	if t.Literal != nil {
+		lit = t.Literal.String()
+	}
+	return fmt.Sprintf("Type: %s Lex: %s Literal: %s", TokenTypeNames[t.Type], t.Lexeme, lit)
 }
 
 func BuildKeywords() (keywords map[string]TokenType) {
