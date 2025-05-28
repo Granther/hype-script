@@ -446,6 +446,9 @@ func (p *Parser) primary() (types.Expr, error) {
 
 	// If we see an ident
 	if p.match(token.IDENTIFIER) {
+		// if p.match(token.DOT) {
+
+		// }
 		return types.NewVarExpr(p.previous()), nil
 	}
 

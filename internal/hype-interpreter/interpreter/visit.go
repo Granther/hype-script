@@ -319,7 +319,7 @@ func (i *Interpreter) VisitIfStmt(stmt *types.If) error {
 
 func (i *Interpreter) VisitImportStmt(expr *types.Import) error {
 	fmt.Println("Visited import stmt in inter")
-	switch expr.Lang.Lexeme {
+	switch expr.Lang.Literal.Val {
 	case "go":
 		for _, item := range expr.Imports {
 			err := i.Environment.Assign(item.Alias, item.Val.Lexeme)

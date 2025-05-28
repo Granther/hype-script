@@ -1,4 +1,4 @@
-package interpreter
+package hypeinterpreter
 
 import (
 	"fmt"
@@ -28,6 +28,123 @@ import (
 // Code is run from top to bottom as interpretted
 // But certain code has a heirarchy
 
+// 1. Setup: Define, skip Expressions
+// 2. Eval: Express, skip Define
+
+// var x = 10
+// x + y // Fails if y is not hoisted
+// var ^y // Define as y-up
+// y = 1 // y is still ^. Assign y-up to 1
+// y = ~y // y is no longer hoisted
+
+// // x + y is only valid if x == 10, but down here.
+// // So x + y would still be invalid
+// if x == 10 {
+// 	// Define it now, but dont submit till condition evals
+// 	// This changes the state of the program
+// 	y = ^y // See this as assign not define
+// }
+
+// print z // Cant print z
+// print t // Can print t, but only if x == 10
+// if x == 10 {
+// 	var z = 2
+// 	var ^t = 3
+// }
+
+// // In a regular lang, you cannot reference a var before assignment without it being in scope (either in a hierarchy, or being hoisted)
+// // I want to be able to reference a var from a lower scope
+
+// print ~g // Basically says "Wait for g to be in scope"
+// {
+// 	for i in l {
+// 		if i == 2 {
+// 			var ^g = "done"
+// 		}
+// 	}
+// }
+
+// // foo is skipped until a becomes ready. As signified by the ~
+// foo(~a)
+// bar(~a)
+// zee(~b)
+
+// if x {
+// 	a = ^io()
+// }
+// // a is set to result of io(), but then turned to a scope UP
+
+// l := [1, 2, 3, 4, 5, 6, 7, 8]
+// n := []
+// for _, item := range l {
+// 	if item % 2 == 0 {
+// 		n = append(item, n)
+// 	}
+// }
+
+// l := [1, 2, 3, 4, 5, 6, 7, 8]
+// n := []
+// parfor item in l {
+// 	if item % 2 == 0 {
+// 		n.append(item)
+// 	}
+// }
+
+// l := [1, 2, 3, 4, 5, 6, 7, 8]
+// n := []
+// ~item -> { n.append(item) } // Ran in goroutine
+// parfor item in l {
+// 	if item % 2 == 0 {
+// 		^item
+// 	}
+// }
+
+// Why not just wait for
+
+// What if things happen async like
+//
+// test.hyp
+// {
+// l = [1, 2, 3]
+// print g
+//
+// for i in l {
+//   if i == 2 {
+//
+//     }
+//   }
+// }
+
+// Define x
+// Skip x+y
+// Define y in global
+
+// 2. Eval
+
+// Skip x
+// Eval x + y
+// Skip y
+
+// x+y is still valid because y = ~y was an expression and expressions ae interpretted but definitions are not
+// x+y is invalid because y = ~y is a definition and defines are absolute
+
+// What if every line is an expression
+// Define x
+// x + y is not valid
+// Define y
+
+// Define x
+// Define y in global
+// x + y is valid
+
+// Inter-Comp
+// Hoist all defines that need it
+// Then eval all expressions
+
+// Setup
+// Visit all stmts that are Var
+//
+
 type Interpreter struct {
 	HadRuntimeError bool
 	Globals         types.Environment
@@ -50,10 +167,41 @@ func NewInterpreter(env types.Environment) core.InterpreterHandler {
 }
 
 func (i *Interpreter) InterpretStmts(stmts []types.Stmt) {
+	// for _, stmt := range stmts {
+	// 	switch stmt.(type) {
+	// 	case *types.Var:
+	// 		i.execute(stmt)
+	// 	case *types.Fun:
+	// 		i.execute(stmt)
+	// 	}
+	// }
+
 	// Execute all statements, statements control Env
 	for _, stmt := range stmts {
 		i.execute(stmt)
 	}
+
+	// g, err := i.Environment.Get("mlorp")
+	// if err != nil {
+	// 	herror.InterpreterRuntimeError(token.Token{}, "mlorp entry glunction not found.")
+	// 	return
+	// }
+
+	// f, ok := g.(native.Callable)
+	// if !ok {
+	// 	herror.InterpreterRuntimeError(token.Token{}, "unable to read mlorp entry glunc to callable.")
+	// 	return
+	// }
+
+	// _, err = f.Call(i, []any{})
+	// if err != nil {
+	// 	glorpups.InterpreterRuntimeError("uncaught wert arrived in global scope", err)
+	// 	return
+	// }
+}
+
+func (i *Interpreter) execute(stmt types.Stmt) error {
+	return stmt.Accept(i)
 }
 
 func (i *Interpreter) GetGlobals() types.Environment {
@@ -84,10 +232,6 @@ func (i *Interpreter) ExecuteBlock(stmts []types.Stmt, environment types.Environ
 	defer end()
 
 	return nil
-}
-
-func (i *Interpreter) execute(stmt types.Stmt) error {
-	return stmt.Accept(i)
 }
 
 func (i *Interpreter) evaluateIndex(index types.Expr) (any, error) {

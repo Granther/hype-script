@@ -1,4 +1,4 @@
-package interpreter
+package hypeinterpreter
 
 import (
 	"fmt"
@@ -319,18 +319,6 @@ func (i *Interpreter) VisitIfStmt(stmt *types.If) error {
 
 func (i *Interpreter) VisitImportStmt(expr *types.Import) error {
 	fmt.Println("Visited import stmt in inter")
-	switch expr.Lang.Lexeme {
-	case "go":
-		for _, item := range expr.Imports {
-			err := i.Environment.Assign(item.Alias, item.Val.Lexeme)
-			if err != nil {
-				return fmt.Errorf("unable to assign import item to env: %v", item.String())
-			}
-		}
-	case "hype":
-	default:
-		return fmt.Errorf("unexpected language type for import: %s", &expr.Lang)
-	}
 	return nil
 }
 
