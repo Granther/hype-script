@@ -6,6 +6,6 @@ import (
 )
 
 type ParserHandler interface {
-	ParseTokens(tokens []token.Token) []types.Stmt
+	ParseTokens(tokens []token.Token) ([]types.Stmt, error)
 	GetHadError() bool 
 }

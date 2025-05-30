@@ -3,8 +3,8 @@ package core
 import "hype-script/internal/types"
 
 type InterpreterHandler interface {
-	InterpretStmts(stmts []types.Stmt)
-	GetHadRuntimeError() bool 
-	ExecuteBlock(stmts []types.Stmt, environment types.Environment) error
-	GetGlobals() types.Environment
+	InterpretStmts(stmts []types.Stmt) error
+	GetHadRuntimeError() bool
+	ExecuteBlock(stmts []types.Stmt, environment types.EnvironmentHandler) error
+	GetGlobals() types.EnvironmentHandler
 }

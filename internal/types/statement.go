@@ -38,7 +38,7 @@ type Fun struct {
 	Params      []token.Token
 	Name        token.Token
 	Body        []Stmt
-	Environment Environment
+	Environment EnvironmentHandler
 }
 
 type Return struct {
@@ -52,8 +52,8 @@ type Import struct {
 }
 
 type Access struct {
-	Name    token.Token
-	Expr 	Expr
+	Name token.Token
+	Expr Expr
 }
 
 func NewReturn(keyword token.Token, val Expr) Stmt {
@@ -63,7 +63,7 @@ func NewReturn(keyword token.Token, val Expr) Stmt {
 	}
 }
 
-func NewFun(name token.Token, params []token.Token, body []Stmt, env Environment) Stmt {
+func NewFun(name token.Token, params []token.Token, body []Stmt, env EnvironmentHandler) Stmt {
 	return &Fun{
 		Params:      params,
 		Name:        name,

@@ -19,7 +19,7 @@ type Hype struct {
 	Scanner     core.ScannerHandler
 	Parser      core.ParserHandler
 	Interpreter core.InterpreterHandler
-	Environment types.Environment
+	Environment types.EnvironmentHandler
 }
 
 func NewHype() *Hype {
@@ -83,24 +83,29 @@ func (g *Hype) Run(source string) error {
 		fmt.Printf("%s %s\n", token.TokenTypeNames[tok.Type], tok.Lexeme)
 	}
 
-	statements := g.Parser.ParseTokens(tokens)
+	statements, err := g.Parser.ParseTokens(tokens)
+	if err != nil {
+		return err
+	}
 	// Debug to see statement info
 	for _, stmt := range statements {
 		fmt.Printf("%s\n", stmt.String())
 	}
-	//fmt.Printf("Num stmts: %d\n", len(statements))
 
-	if g.Parser.GetHadError() {
-		fmt.Println("Error encountered in Parser, stopping...")
-		return nil
+	err = g.Interpreter.InterpretStmts(statements)
+	if err != nil {
+		return err
 	}
 
-	g.Interpreter.InterpretStmts(statements)
+	// if g.Interpreter.GetHadRuntimeError() {
+	// 	fmt.Println("Runtime Error encountered in Run")
+	// 	return nil
+	// }
 
-	if g.Interpreter.GetHadRuntimeError() {
-		fmt.Println("Runtime Error encountered in Run")
-		return nil
-	}
+	// if g.Parser.GetHadError() {
+	// 	fmt.Println("Error encountered in Parser, stopping...")
+	// 	return nil
+	// }
 
 	return nil
 }

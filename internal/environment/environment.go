@@ -2,16 +2,15 @@ package environment
 
 import (
 	"fmt"
-	"hype-script/internal/token"
 	"hype-script/internal/types"
 )
 
 type Environment struct {
-	Enlcosing types.Environment
+	Enlcosing types.EnvironmentHandler
 	Values    map[string]any
 }
 
-func NewEnvironment(enclosing types.Environment) *Environment {
+func NewEnvironment(enclosing types.EnvironmentHandler) *Environment {
 	return &Environment{
 		Enlcosing: enclosing,
 		Values:    make(map[string]any),
@@ -39,10 +38,10 @@ func (e *Environment) Define(name string, val any) {
 
 // Cannot create new var when assigning, thus runtime error
 // Has to be runtime because what if a condition must be met to create a var/access it
-func (e *Environment) Assign(name token.Token, val any) error {
-	_, ok := e.Values[name.Lexeme]
+func (e *Environment) Assign(name string, val any) error {
+	_, ok := e.Values[name]
 	if ok {
-		e.Values[name.Lexeme] = val
+		e.Values[name] = val
 		return nil
 	}
 
@@ -52,7 +51,7 @@ func (e *Environment) Assign(name token.Token, val any) error {
 		return nil
 	}
 
-	return fmt.Errorf("undefined variable %s", name.Lexeme)
+	return fmt.Errorf("undefined variable %s", name)
 }
 
 func (e *Environment) String() string {

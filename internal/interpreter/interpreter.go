@@ -34,13 +34,13 @@ import (
 
 type Interpreter struct {
 	HadRuntimeError bool
-	Globals         types.Environment
-	Environment     types.Environment
+	Globals         types.EnvironmentHandler
+	Environment     types.EnvironmentHandler
 	GoInterpreter   *interp.Interpreter
-	GoEnvironment   types.Environment
+	GoEnvironment   types.EnvironmentHandler
 }
 
-func NewInterpreter(env types.Environment) core.InterpreterHandler {
+func NewInterpreter(env types.EnvironmentHandler) core.InterpreterHandler {
 	// Acts as its own env, globals is the ROOT env that everything inherits from
 	// globals := env
 	// globals.Define("clock", native.NewClockCallable())
@@ -59,14 +59,22 @@ func NewInterpreter(env types.Environment) core.InterpreterHandler {
 	}
 }
 
-func (i *Interpreter) InterpretStmts(stmts []types.Stmt) {
+func (i *Interpreter) InterpretStmts(stmts []types.Stmt) error {
 	// Execute all statements, statements control Env
 	for _, stmt := range stmts {
-		i.execute(stmt)
+		err := i.execute(stmt)
+		if err != nil {
+			fmt.Println("Interpeter: ", err.Error())
+			i.HadRuntimeError = true
+		}
 	}
+	if i.HadRuntimeError {
+		return fmt.Errorf("error encountered in interpreter")
+	}
+	return nil
 }
 
-func (i *Interpreter) GetGlobals() types.Environment {
+func (i *Interpreter) GetGlobals() types.EnvironmentHandler {
 	return i.Environment
 }
 
@@ -74,7 +82,7 @@ func (i *Interpreter) GetHadRuntimeError() bool {
 	return i.HadRuntimeError
 }
 
-func (i *Interpreter) ExecuteBlock(stmts []types.Stmt, environment types.Environment) error {
+func (i *Interpreter) ExecuteBlock(stmts []types.Stmt, environment types.EnvironmentHandler) error {
 	prev := i.Environment // Save old, for setting back later
 
 	// Change to new block and execute from that env
@@ -99,8 +107,7 @@ func (i *Interpreter) ExecuteBlock(stmts []types.Stmt, environment types.Environ
 func (i *Interpreter) SetupGoInterp() {}
 
 func (i *Interpreter) ExecuteGo(src string) (any, error) {
-
-	return nil, nil
+	return i.GoInterpreter.Eval(src)
 }
 
 func (i *Interpreter) execute(stmt types.Stmt) error {

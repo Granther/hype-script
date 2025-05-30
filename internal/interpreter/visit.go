@@ -8,7 +8,6 @@ import (
 	"hype-script/internal/token"
 	"hype-script/internal/types"
 	"hype-script/internal/utils"
-	"os"
 	"reflect"
 )
 
@@ -103,7 +102,7 @@ func (i *Interpreter) VisitBinaryExpr(expr *types.BinaryExpr) (any, error) {
 func (i *Interpreter) postfixAssign(expr types.Expr, val any) error {
 	variable, ok := expr.(*types.VarExpr)
 	if ok {
-		return i.Environment.Assign(variable.Name, val)
+		return i.Environment.Assign(variable.Name.Lexeme, val)
 	}
 	return nil
 }
@@ -156,7 +155,7 @@ func (i *Interpreter) VisitPostfixExpr(expr *types.PostfixExpr) (any, error) {
 	// If expr is a variable, reassign the variable
 	variable, ok := expr.Val.(*types.VarExpr)
 	if ok {
-		if err = i.Environment.Assign(variable.Name, val); err != nil {
+		if err = i.Environment.Assign(variable.Name.Lexeme, val); err != nil {
 			return nil, err
 		}
 	}
@@ -324,9 +323,10 @@ func (i *Interpreter) VisitImportStmt(expr *types.Import) error {
 	case "go":
 		// Add aliases to go env
 		for _, item := range expr.Imports {
-			err := i.GoEnvironment.Assign(item.Alias, item.Val.Lexeme)
+			i.GoEnvironment.Define(item.Alias.Lexeme, item.Val.Lexeme)
+			_, err := i.GoInterpreter.Eval(fmt.Sprintf("import \"%s\"", item.Val.Literal.String()))
 			if err != nil {
-				return fmt.Errorf("unable to assign import item to go env: %w", err)
+				return fmt.Errorf("error in evaluating go source code: %w", err)
 			}
 		}
 	case "hype":
@@ -341,7 +341,7 @@ func (i *Interpreter) VisitAssignExpr(expr *types.AssignExpr) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = i.Environment.Assign(expr.Name, val)
+	err = i.Environment.Assign(expr.Name.Lexeme, val)
 	if err != nil {
 		return nil, err
 	}
@@ -412,41 +412,28 @@ func (i *Interpreter) VisitAccessExpr(expr *types.AccessExpr) (any, error) {
 			// Build expr
 			str += rootName
 			for _, item := range expr.Exprs[1:] {
-				i, ok := item.(*types.VarExpr)
-				if ok {
+				switch i := item.(type) {
+				case *types.VarExpr:
 					str += ("." + i.Name.Lexeme)
+				case *types.CallExpr:
+					str += ("." + i.Callee.(*types.VarExpr).Name.Lexeme + "()")
+				default:
+					return nil, fmt.Errorf("unexpected type of component expression in access expression")
 				}
 			}
-			fmt.Println(str)
-			os.Exit(1)
 			// When importing go libs, add to central env yaegi
 			// This is used when any go is run
 			_, err := i.ExecuteGo(str)
+			// fmt.Println(x)
 			if err != nil {
 				return nil, err
 			}
 		}
+		fmt.Println(str)
 	}
-	//os.Exit(1)
-
-	// val := expr.Exprs[0].Accept()
-
-	for _, e := range expr.Exprs {
-		fmt.Println(e.GetType())
-		// v, ok := e.(*types.AccessExpr)
-		// if ok {
-		// 	exprs = append(exprs, v.)
-		// }
-	}
-	// if expr.Name.Lexeme == "fmt" {
-	// 	fmt.Println("Going to run: ", expr.Expr.GetVal())
-
-	// }
-	//fmt.Println("Visit access Expr")
 	return nil, nil
 }
 
 func (i *Interpreter) VisitAccessStmt(expr *types.Access) error {
-	fmt.Println("Visit access Stmt")
 	return nil
 }

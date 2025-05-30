@@ -1,25 +1,9 @@
 package types
 
-import (
-	"hype-script/internal/token"
-)
-
-type Interpreter interface {
-	GetGlobals() Environment
-	ExecuteBlock(stmts []Stmt, environment Environment) error
-	GetHadRuntimeError() bool
-	Interpret(stmts []Stmt)
-}
-
-type Parser interface {
-	GetHadError() bool
-	Parse(tokens []token.Token) []Stmt
-}
-
-type Environment interface {
+type EnvironmentHandler interface {
 	Get(name string) (any, error)
 	Define(name string, val any)
-	Assign(name token.Token, val any) error
+	Assign(name string, val any) error
 	String() string
 }
 
@@ -64,5 +48,5 @@ type Visitor interface {
 type Expr interface {
 	Accept(visitor Visitor) (any, error)
 	GetType() string // Gets simple type of Expressin
-	GetVal() string // Gets value of Expression, loose and for debugging. Not cononical or recursive
+	GetVal() string  // Gets value of Expression, loose and for debugging. Not cononical or recursive
 }

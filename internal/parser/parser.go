@@ -38,11 +38,11 @@ import (
 type Parser struct {
 	HadError    bool
 	Tokens      []token.Token
-	Environment types.Environment
+	Environment types.EnvironmentHandler
 	Current     int
 }
 
-func NewParser(e types.Environment) *Parser {
+func NewParser(e types.EnvironmentHandler) *Parser {
 	return &Parser{
 		HadError:    false,
 		Current:     0,
@@ -51,12 +51,12 @@ func NewParser(e types.Environment) *Parser {
 }
 
 // Takes in parsed tokens from Scanner and outputs list of Statements
-func (p *Parser) ParseTokens(tokens []token.Token) []types.Stmt {
+func (p *Parser) ParseTokens(tokens []token.Token) ([]types.Stmt, error) {
 	p.Tokens = tokens
 	statements := []types.Stmt{}
 
 	// We see no tokens, just return
-	if len(tokens) == 0 { return statements }
+	if len(tokens) == 0 { return statements, nil }
 
 	// While we are still within range of passed tokens
 	for !p.isAtEnd() {
@@ -70,7 +70,9 @@ func (p *Parser) ParseTokens(tokens []token.Token) []types.Stmt {
 		}
 		statements = append(statements, decl)
 	}
-	return statements
+	var err error = nil
+	if p.HadError { err = fmt.Errorf("error encountered in parser") }
+	return statements, err
 }
 
 // If passed token is the type of next token, consume it, otherwise error
