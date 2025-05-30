@@ -37,3 +37,26 @@ count(fmt.Sprintf(%s\n, "Hello"))
 - Has some quirks
 - Uses Go types and libraries. This means we can use Go functions, consts, etc... in Hype-Script
 - No main func
+
+import go ("fmt")
+
+IMPORT import
+IDENTIFIER go
+LEFT_PAREN (
+STRING \"fmt\"
+RIGHT_PAREN )
+END \n
+
+
+
+import go (
+    "fmt"
+)
+
+IMPORT import
+IDENTIFIER go
+LEFT_PAREN (
+STRING \"fmt\"
+END \n
+RIGHT_PAREN )
+END

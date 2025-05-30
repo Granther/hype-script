@@ -78,6 +78,9 @@ func (s *Scanner) scanToken() {
 		s.addSimpleToken(token.LEFT_PAREN)
 		s.eatBad()
 	case ')':
+		if s.prevToken().Type != token.END {
+			s.addSimpleToken(token.END)
+		}
 		s.addSimpleToken(token.RIGHT_PAREN)
 	case '{':
 		s.addSimpleToken(token.LEFT_BRACE)
@@ -161,14 +164,14 @@ func (s *Scanner) scanToken() {
 		} else {
 			s.addSimpleToken(token.SLASH)
 		}
-	case ' ': // We are basically skipping these, no error, no op
-	case '\r':
-	case '\t': // Store them in linked list?
+	case ' ', '\r', '\t': 
+	// We are basically skipping these, no error, no op
+	// Store them in linked list?
 	case '\n': // Do nothing but start iterate to the next line
 		s.Line += 1
-		// for s.match('\n') {
-		// 	s.Line += 1
-		// }
+		for s.match('\n') {
+			s.Line += 1
+		}
 		if s.prevToken().Type == token.END {
 			s.advance()
 			break
@@ -236,8 +239,13 @@ func (s *Scanner) eatAll(char rune) {
 	}
 }
 
+func (s *Scanner) nextIsBad() bool {
+	return s.peek() == '\n' || s.peek() == '\r' || s.peek() == '\t' || s.peek() == ' '
+}
+
+// Advance if next token is \n, \r, \t or ' '
 func (s *Scanner) eatBad() {
-	for s.peek() == '\n' || s.peek() == '\r' || s.peek() == '\t' || s.peek() == ' ' {
+	for s.nextIsBad() {
 		s.advance()
 	}
 }

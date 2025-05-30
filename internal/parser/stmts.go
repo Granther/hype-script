@@ -145,6 +145,11 @@ func (p *Parser) exprStmt() (types.Stmt, error) {
 // import hyp (time "./time.hyp")
 // Notice the alias
 func (p *Parser) importStmt() (types.Stmt, error) {
+	// _, err := p.expression()
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	lang, err := p.consume(token.IDENTIFIER, "Expect identifier after import statement") // Either 'go' or 'hyp'
 	if err != nil {
 		return nil, err

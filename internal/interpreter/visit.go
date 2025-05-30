@@ -322,10 +322,11 @@ func (i *Interpreter) VisitImportStmt(expr *types.Import) error {
 	fmt.Println("Visited import stmt in inter")
 	switch expr.Lang.Lexeme {
 	case "go":
+		// Add aliases to go env
 		for _, item := range expr.Imports {
-			err := i.Environment.Assign(item.Alias, item.Val.Lexeme)
+			err := i.GoEnvironment.Assign(item.Alias, item.Val.Lexeme)
 			if err != nil {
-				return fmt.Errorf("unable to assign import item to env: %v", item.String())
+				return fmt.Errorf("unable to assign import item to go env: %w", err)
 			}
 		}
 	case "hype":
@@ -405,15 +406,19 @@ func (i *Interpreter) VisitAccessExpr(expr *types.AccessExpr) (any, error) {
 	if ok {
 		var str string
 		// Check if v in golang imports
-		if v.Name.Lexeme == "fmt" {
+		rootName := v.Name.Lexeme
+		_, err := i.GoEnvironment.Get(rootName)
+		if err != nil {
 			// Build expr
-			str += v.Name.Lexeme
+			str += rootName
 			for _, item := range expr.Exprs[1:] {
 				i, ok := item.(*types.VarExpr)
 				if ok {
 					str += ("." + i.Name.Lexeme)
 				}
 			}
+			fmt.Println(str)
+			os.Exit(1)
 			// When importing go libs, add to central env yaegi
 			// This is used when any go is run
 			_, err := i.ExecuteGo(str)
@@ -422,7 +427,7 @@ func (i *Interpreter) VisitAccessExpr(expr *types.AccessExpr) (any, error) {
 			}
 		}
 	}
-	os.Exit(1)
+	//os.Exit(1)
 
 	// val := expr.Exprs[0].Accept()
 

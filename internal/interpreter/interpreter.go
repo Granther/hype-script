@@ -2,12 +2,16 @@ package interpreter
 
 import (
 	"fmt"
+	"hype-script/internal/environment"
 	herror "hype-script/internal/error"
 	"hype-script/internal/glorpups"
 	"hype-script/internal/token"
 	"hype-script/internal/types"
 	"hype-script/internal/types/core"
 	"hype-script/internal/utils"
+
+	"github.com/traefik/yaegi/interp"
+	"github.com/traefik/yaegi/stdlib"
 )
 
 // State and statements
@@ -32,6 +36,8 @@ type Interpreter struct {
 	HadRuntimeError bool
 	Globals         types.Environment
 	Environment     types.Environment
+	GoInterpreter   *interp.Interpreter
+	GoEnvironment   types.Environment
 }
 
 func NewInterpreter(env types.Environment) core.InterpreterHandler {
@@ -39,13 +45,17 @@ func NewInterpreter(env types.Environment) core.InterpreterHandler {
 	// globals := env
 	// globals.Define("clock", native.NewClockCallable())
 
+	goInterp := interp.New(interp.Options{})
+	goInterp.Use(stdlib.Symbols)
+
 	return &Interpreter{
 		// Pass nil because we want this to point to the global scope
 		// Globals:         globals,
-		Environment: env, // ROOT of all envs
-		//Environment:     environment.NewEnvironment(globals),
+		Environment:   env, // ROOT of all envs
+		GoEnvironment: environment.NewEnvironment(nil),
 		// Inherits from
 		HadRuntimeError: false,
+		GoInterpreter:   goInterp,
 	}
 }
 
@@ -84,6 +94,13 @@ func (i *Interpreter) ExecuteBlock(stmts []types.Stmt, environment types.Environ
 	defer end()
 
 	return nil
+}
+
+func (i *Interpreter) SetupGoInterp() {}
+
+func (i *Interpreter) ExecuteGo(src string) (any, error) {
+
+	return nil, nil
 }
 
 func (i *Interpreter) execute(stmt types.Stmt) error {
