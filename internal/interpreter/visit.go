@@ -400,10 +400,17 @@ func (i *Interpreter) VisitLogicalExpr(expr *types.LogicalExpr) (any, error) {
 }
 
 func (i *Interpreter) VisitAccessExpr(expr *types.AccessExpr) (any, error) { 
-	if expr.Name.Lexeme == "fmt" {
-		fmt.Println("Going to run: ", expr.Expr.GetVal())
-		
+	for _, e := range expr.Exprs {
+		fmt.Println(e.GetType())
+		// v, ok := e.(*types.AccessExpr)
+		// if ok {
+		// 	exprs = append(exprs, v.)
+		// }
 	}
+	// if expr.Name.Lexeme == "fmt" {
+	// 	fmt.Println("Going to run: ", expr.Expr.GetVal())
+		
+	// }
 	//fmt.Println("Visit access Expr")
 	return nil, nil 
 }

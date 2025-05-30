@@ -1,21 +1,14 @@
 package types
 
-import (
-	"fmt"
-	"hype-script/internal/token"
-)
-
 type AccessExpr struct {
-	Type string
-	Name token.Token
-	Expr Expr
+	Type  string
+	Exprs []Expr
 }
 
-func NewAccessExpr(name token.Token, expr Expr) Expr {
+func NewAccessExpr(exprs []Expr) Expr {
 	return &AccessExpr{
-		Type: "AccessExpr",
-		Name: name,
-		Expr: expr,
+		Type:  "AccessExpr",
+		Exprs: exprs,
 	}
 }
 
@@ -28,5 +21,5 @@ func (v *AccessExpr) GetType() string {
 }
 
 func (v *AccessExpr) GetVal() string {
-	return fmt.Sprintf("%s, %s", v.Name.String(), v.Expr.GetVal())
+	return "Not impl"
 }

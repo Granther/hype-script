@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"hype-script/internal/token"
 )
 
@@ -30,6 +29,5 @@ func (v *CallExpr) GetType() string {
 }
 
 func (v *CallExpr) GetVal() string {
-	fmt.Println("Got getval")
 	return v.Callee.GetVal()
 }

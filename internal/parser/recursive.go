@@ -7,7 +7,6 @@ import (
 	"hype-script/internal/literal"
 	"hype-script/internal/token"
 	"hype-script/internal/types"
-	"os"
 )
 
 // Called repeatably to parse a series of statments in a program, perfect place to look for panic
@@ -334,8 +333,30 @@ func (p *Parser) unary() (types.Expr, error) {
 		}
 		return types.NewUnaryExpr(operator, right), nil
 	}
-	return p.postfix()
+	return p.access()
 	// Must have reached highest level precedence
+}
+
+func (p *Parser) access() (types.Expr, error) {
+	if p.peekNext().Type == token.DOT {
+		exprs := []types.Expr{}
+		e, err := p.postfix()
+		if err != nil {
+			return nil, err
+		}
+		exprs = append(exprs, e)
+		for p.match(token.DOT) {
+			e, err = p.postfix()
+			if err != nil {
+				return nil, err
+			}
+			exprs = append(exprs, e)
+			if p.match(token.END) {
+				return types.NewAccessExpr(exprs), nil
+			}
+		}
+	}
+	return p.postfix()
 }
 
 func (p *Parser) postfix() (types.Expr, error) {
@@ -445,34 +466,75 @@ func (p *Parser) primary() (types.Expr, error) {
 		return types.NewLiteralExpr(p.previous().Literal), nil
 	}
 
+	// IDENT DOT IDENT
+	// How can this be beautiful?
+	// We save Access as an array of exprs
+
+	// Only return access if we see end
+
+	// fmt.Println.Go()
+
+	// How can we do this in an intuitive way?
+	// We see expr followed by DOT followed by another expr. We are seeing access
+
 	// If we see an ident
 	if p.match(token.IDENTIFIER) {
-		prev := p.previous()
-		if p.match(token.DOT) {
-			exprs := []types.Expr{}
-			for !p.match(token.END) {
-				e, err := p.expression()
-				//v, err := p.consume(token.IDENTIFIER, "Expected Ident after DOT")
-				if err != nil {
-					return nil, err
-				}
-				// IDENT DOT IDENT END
-				// println . go END
-				p.match(token.DOT)
-				exprs = append(exprs, e)
-			}
-			fmt.Println("Exprs...")
-			for _, item := range exprs {
-				item.GetVal()
-			}
-			os.Exit(1)
-			// expr, err := p.expression()
-			// if err != nil {
-			// 	return nil, fmt.Errorf("exprected expression after DOT")
-			// }
-			//return types.NewAccessExpr(prev, exprs), nil
-		}
-		return types.NewVarExpr(prev), nil
+		return types.NewVarExpr(p.previous()), nil
+		// v := types.NewVarExpr(p.previous())
+
+		// exprs := []types.Expr{}
+		// if p.peek().Type == token.DOT {
+		// 	// toks = append(toks, prev)
+		// 	exprs = append(exprs, v) // {fmt}
+		// 	for p.match(token.DOT) {
+		// 		e, err := p.primary()
+		// 		// t, err := p.consume(token.IDENTIFIER, "Expected IDENT after DOT")
+		// 		if err != nil {
+		// 			return nil, err
+		// 		}
+		// 		//toks = append(toks, t)
+		// 		exprs = append(exprs, e) // {fmt, Println}
+		// 		for _, item := range exprs {
+		// 			fmt.Println(item.GetType())
+		// 		}
+		// 		os.Exit(1)
+		// 		// if p.peek().Type == token.END {
+		// 		// 	//fmt.Println("Got end: ", e.GetType())
+		// 		// 	//os.Exit(1)
+		// 		// 	return types.NewAccessExpr(exprs), nil
+		// 		// }
+		// 	}
+		// 	//return types.NewAccessExpr(exprs), nil
+		// 	if p.peek().Type == token.END {
+		// 		return types.NewAccessExpr(exprs), nil
+		// 	}
+		// }
+		// // We dont see DOT, just Var
+		// //return types.NewVarExpr(prev), nil
+		// return v, nil
+		// 	exprs := []types.Expr{}
+		// 	for !p.match(token.END) {
+		// 		e, err := p.expression()
+		// 		//v, err := p.consume(token.IDENTIFIER, "Expected Ident after DOT")
+		// 		if err != nil {
+		// 			return nil, err
+		// 		}
+		// 		// IDENT DOT IDENT END
+		// 		// println . go END
+		// 		p.match(token.DOT)
+		// 		exprs = append(exprs, e)
+		// 	}
+		// 	fmt.Println("Exprs...")
+		// 	for _, item := range exprs {
+		// 		item.GetVal()
+		// 	}
+		// 	os.Exit(1)
+		// 	// expr, err := p.expression()
+		// 	// if err != nil {
+		// 	// 	return nil, fmt.Errorf("exprected expression after DOT")
+		// 	// }
+		// 	//return types.NewAccessExpr(prev, exprs), nil
+		// }
 		// Catch keyword "fmt" and everything else is Literal for yaegi
 	}
 
