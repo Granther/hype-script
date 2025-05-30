@@ -8,6 +8,7 @@ import (
 	"hype-script/internal/token"
 	"hype-script/internal/types"
 	"hype-script/internal/utils"
+	"os"
 	"reflect"
 )
 
@@ -399,7 +400,32 @@ func (i *Interpreter) VisitLogicalExpr(expr *types.LogicalExpr) (any, error) {
 	return i.evaluate(expr.Right)
 }
 
-func (i *Interpreter) VisitAccessExpr(expr *types.AccessExpr) (any, error) { 
+func (i *Interpreter) VisitAccessExpr(expr *types.AccessExpr) (any, error) {
+	v, ok := expr.Exprs[0].(*types.VarExpr)
+	if ok {
+		var str string
+		// Check if v in golang imports
+		if v.Name.Lexeme == "fmt" {
+			// Build expr
+			str += v.Name.Lexeme
+			for _, item := range expr.Exprs[1:] {
+				i, ok := item.(*types.VarExpr)
+				if ok {
+					str += ("." + i.Name.Lexeme)
+				}
+			}
+			// When importing go libs, add to central env yaegi
+			// This is used when any go is run
+			_, err := i.ExecuteGo(str)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	os.Exit(1)
+
+	// val := expr.Exprs[0].Accept()
+
 	for _, e := range expr.Exprs {
 		fmt.Println(e.GetType())
 		// v, ok := e.(*types.AccessExpr)
@@ -409,13 +435,13 @@ func (i *Interpreter) VisitAccessExpr(expr *types.AccessExpr) (any, error) {
 	}
 	// if expr.Name.Lexeme == "fmt" {
 	// 	fmt.Println("Going to run: ", expr.Expr.GetVal())
-		
+
 	// }
 	//fmt.Println("Visit access Expr")
-	return nil, nil 
+	return nil, nil
 }
 
-func (i *Interpreter) VisitAccessStmt(expr *types.Access) error { 
+func (i *Interpreter) VisitAccessStmt(expr *types.Access) error {
 	fmt.Println("Visit access Stmt")
-	return nil 
+	return nil
 }

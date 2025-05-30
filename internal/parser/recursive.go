@@ -337,14 +337,14 @@ func (p *Parser) unary() (types.Expr, error) {
 	// Must have reached highest level precedence
 }
 
+// Mwah (may 30 2025)
 func (p *Parser) access() (types.Expr, error) {
 	if p.peekNext().Type == token.DOT {
-		exprs := []types.Expr{}
 		e, err := p.postfix()
 		if err != nil {
 			return nil, err
 		}
-		exprs = append(exprs, e)
+		exprs := []types.Expr{e}
 		for p.match(token.DOT) {
 			e, err = p.postfix()
 			if err != nil {
@@ -480,62 +480,6 @@ func (p *Parser) primary() (types.Expr, error) {
 	// If we see an ident
 	if p.match(token.IDENTIFIER) {
 		return types.NewVarExpr(p.previous()), nil
-		// v := types.NewVarExpr(p.previous())
-
-		// exprs := []types.Expr{}
-		// if p.peek().Type == token.DOT {
-		// 	// toks = append(toks, prev)
-		// 	exprs = append(exprs, v) // {fmt}
-		// 	for p.match(token.DOT) {
-		// 		e, err := p.primary()
-		// 		// t, err := p.consume(token.IDENTIFIER, "Expected IDENT after DOT")
-		// 		if err != nil {
-		// 			return nil, err
-		// 		}
-		// 		//toks = append(toks, t)
-		// 		exprs = append(exprs, e) // {fmt, Println}
-		// 		for _, item := range exprs {
-		// 			fmt.Println(item.GetType())
-		// 		}
-		// 		os.Exit(1)
-		// 		// if p.peek().Type == token.END {
-		// 		// 	//fmt.Println("Got end: ", e.GetType())
-		// 		// 	//os.Exit(1)
-		// 		// 	return types.NewAccessExpr(exprs), nil
-		// 		// }
-		// 	}
-		// 	//return types.NewAccessExpr(exprs), nil
-		// 	if p.peek().Type == token.END {
-		// 		return types.NewAccessExpr(exprs), nil
-		// 	}
-		// }
-		// // We dont see DOT, just Var
-		// //return types.NewVarExpr(prev), nil
-		// return v, nil
-		// 	exprs := []types.Expr{}
-		// 	for !p.match(token.END) {
-		// 		e, err := p.expression()
-		// 		//v, err := p.consume(token.IDENTIFIER, "Expected Ident after DOT")
-		// 		if err != nil {
-		// 			return nil, err
-		// 		}
-		// 		// IDENT DOT IDENT END
-		// 		// println . go END
-		// 		p.match(token.DOT)
-		// 		exprs = append(exprs, e)
-		// 	}
-		// 	fmt.Println("Exprs...")
-		// 	for _, item := range exprs {
-		// 		item.GetVal()
-		// 	}
-		// 	os.Exit(1)
-		// 	// expr, err := p.expression()
-		// 	// if err != nil {
-		// 	// 	return nil, fmt.Errorf("exprected expression after DOT")
-		// 	// }
-		// 	//return types.NewAccessExpr(prev, exprs), nil
-		// }
-		// Catch keyword "fmt" and everything else is Literal for yaegi
 	}
 
 	// fmt.Println.Thing
