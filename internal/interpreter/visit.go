@@ -416,7 +416,15 @@ func (i *Interpreter) VisitAccessExpr(expr *types.AccessExpr) (any, error) {
 				case *types.VarExpr:
 					str += ("." + i.Name.Lexeme)
 				case *types.CallExpr:
-					str += ("." + i.Callee.(*types.VarExpr).Name.Lexeme + "()")
+					root := i.Callee.(*types.VarExpr).Name.Lexeme
+					str += "." + root + "("
+					for _, arg := range i.Args {
+						t, ok := arg.(*types.LiteralExpr)
+						if ok {
+							str += "\"" + t.Val.String() + "\""
+						}
+					}
+					str += ")"
 				default:
 					return nil, fmt.Errorf("unexpected type of component expression in access expression")
 				}

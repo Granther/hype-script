@@ -78,6 +78,10 @@ func (s *Scanner) scanToken() {
 		s.addSimpleToken(token.LEFT_PAREN)
 		s.eatBad()
 	case ')':
+		if s.prevToken().Type == token.LEFT_PAREN {
+			s.addSimpleToken(token.RIGHT_PAREN)
+			break
+		}
 		if s.prevToken().Type != token.END {
 			s.addSimpleToken(token.END)
 		}

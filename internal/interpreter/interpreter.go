@@ -104,7 +104,7 @@ func (i *Interpreter) ExecuteBlock(stmts []types.Stmt, environment types.Environ
 	return nil
 }
 
-func (i *Interpreter) SetupGoInterp() {}
+func (i *Interpreter) setupGoInterp() {}
 
 func (i *Interpreter) ExecuteGo(src string) (any, error) {
 	return i.GoInterpreter.Eval(src)

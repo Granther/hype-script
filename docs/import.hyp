@@ -1,3 +1,5 @@
 import go (
-    "fmt")
-fmt.Println()
+    "fmt"
+)
+
+fmt.Println("hello from inside hype")

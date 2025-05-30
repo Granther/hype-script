@@ -414,6 +414,9 @@ func (p *Parser) finishCall(callee types.Expr) (types.Expr, error) {
 				return nil, err
 			}
 			args = append(args, expr)
+		
+			// foo(v END, x END) END
+			p.match(token.END)
 
 			if !p.match(token.COMMA) {
 				break
