@@ -26,6 +26,7 @@ const (
 	SPACE
 	TILDE // ~
 	KARAT // ^
+	COLON // :
 
 	// One or two character tokens.
 	BANG       // !
@@ -43,6 +44,7 @@ const (
 	STAR_EQUAL
 	SLASH_EQUAL
 	TILDE_EQUAL // ~=
+	COLON_EQUAL // :=
 
 	// Literals.
 	IDENTIFIER
@@ -123,6 +125,8 @@ var TokenTypeNames = map[TokenType]string{
 	LEFT_BRACKET:  "LEFT_BRACKET",
 	RIGHT_BRACKET: "RIGHT_BRACKET",
 	IMPORT:        "IMPORT",
+	COLON:         "COLON",
+	COLON_EQUAL:   "COLON_EQUAL",
 }
 
 var BadTokens = map[rune]bool{

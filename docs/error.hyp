@@ -1,0 +1,33 @@
+import go {
+    "test"
+    "fmt"
+}
+
+import hype {
+    "thing"
+}
+
+err := test.Foo()
+if err != nil {
+    fmt.Println("Woops: ", err.Error())
+}
+
+// yo would take a string 
+s := thing.yo(err.Error())
+// if yo() returns a string, this is the same type that err.Error() returns
+
+// I think as long as the type system remains the same we are good 
+
+func thing() string {
+    return "Println"
+}
+
+fmt.thing()("Hello)
+fmt.Println("Hello") -> Hello
+
+// returns &yaegi.Thing
+t := test.Foo()
+// If t becomes yaegi.Thing (not *)
+
+// And Bar takes *t?
+test.Bar(t) // ... (t)? Not right

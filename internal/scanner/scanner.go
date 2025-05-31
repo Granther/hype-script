@@ -154,6 +154,12 @@ func (s *Scanner) scanToken() {
 		} else {
 			s.addSimpleToken(token.TILDE)
 		}
+	case ':':
+		if s.match('=') {
+			s.addSimpleToken(token.COLON_EQUAL)
+		} else {
+			s.addSimpleToken(token.COLON)
+		}
 	case '/': // Are we doing division or commenting?
 		if s.match('/') { // If next char is /, is comment, read till the end of the line
 			for s.peek() != '\n' && !s.isAtEnd() {
