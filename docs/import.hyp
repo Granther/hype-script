@@ -1,5 +1,9 @@
-import go (
-    "fmt"
-)
+import go ("fmt")
 
 fmt.Println("hello from inside hype")
+
+x := fmt.Thing()
+
+switch os.Args[1] {
+    
+}
