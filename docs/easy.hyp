@@ -1,0 +1,17 @@
+What makes a system easy, intuitive and effortless to use/learn?
+- Prior practice
+- Familiarity
+- 
+
+IMPORT STMT 
+
+REPL:
+2 + 3
+x = 1
+2 + 3 -> / x
+
+FUNCTION STMT 
+    DO SE
+    RETURN EXPR
+END
+
