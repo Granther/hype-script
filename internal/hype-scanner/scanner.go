@@ -1,4 +1,4 @@
-package scanner
+package hype_HypeScanner
 
 import (
 	"fmt"
@@ -12,22 +12,22 @@ import (
 // Whats wrong with putting all tokens in a hashtable?
 // What about accounting for END? Should we leave that up to the Parser?
 
-type Scanner struct {
+type HypeScanner struct {
 	Source        string
 	Tokens        []token.Token
-	Start         int // Points to first lexeme being scanner
+	Start         int // Points to first lexeme being HypeScanner
 	Current       int // Character currently being considered
 	Line          int // The source line that Current is on
 	Keywords      map[string]token.TokenType
 	LeftOperators map[rune]token.TokenType
 }
 
-func NewScanner() core.ScannerHandler {
+func NewHypeScanner() core.ScannerHandler {
 	// Map of string to token.ITEM
 	keywords := token.BuildKeywords()
 	leftOperators := token.BuildLeftOper()
 
-	return &Scanner{
+	return &HypeScanner{
 		Tokens:        []token.Token{},
 		Start:         0,
 		Current:       0,
@@ -37,7 +37,7 @@ func NewScanner() core.ScannerHandler {
 	}
 }
 
-func (s *Scanner) ScanTokens(source string) ([]token.Token, error) {
+func (s *HypeScanner) ScanTokens(source string) ([]token.Token, error) {
 	s.Source = source
 	// Each iteration we scan a single token
 	for !s.isAtEnd() {
@@ -45,7 +45,7 @@ func (s *Scanner) ScanTokens(source string) ([]token.Token, error) {
 		s.scanToken()
 	}
 
-	// We as the scanner performed our job, just return 0 toks
+	// We as the HypeScanner performed our job, just return 0 toks
 	if len(s.Tokens) == 0 {
 		return s.Tokens, nil
 	}
@@ -64,13 +64,13 @@ func (s *Scanner) ScanTokens(source string) ([]token.Token, error) {
 
 // If current character being checked is >= len of source
 // If we are parsing beyond the source return true
-func (s *Scanner) isAtEnd() bool {
+func (s *HypeScanner) isAtEnd() bool {
 	return s.Current >= len(s.Source)
 }
 
 // type RuneProcedure func()
 
-// func (s *Scanner) createProcMap() (procMap map[rune]RuneProcedure) {
+// func (s *HypeScanner) createProcMap() (procMap map[rune]RuneProcedure) {
 // 	procMap = make(map[rune]RuneProcedure)
 // 	procMap['('] = func() {
 // 		fmt.Println("hello")
@@ -78,7 +78,7 @@ func (s *Scanner) isAtEnd() bool {
 // 	return
 // }
 
-func (s *Scanner) scanToken() {
+func (s *HypeScanner) scanToken() {
 	c := s.advance()
 
 	// fmt.Println(string(c))
@@ -211,14 +211,14 @@ func (s *Scanner) scanToken() {
 }
 
 // Similar to advance but does not consume the character, 'lookahead'
-func (s *Scanner) peek() rune {
+func (s *HypeScanner) peek() rune {
 	if s.isAtEnd() {
 		return 0
 	}
 	return rune(s.Source[s.Current])
 }
 
-func (s *Scanner) nextIsOper() bool {
+func (s *HypeScanner) nextIsOper() bool {
 	if s.peek() == ' ' {
 		s.advance()
 	}
@@ -226,14 +226,14 @@ func (s *Scanner) nextIsOper() bool {
 	return ok
 }
 
-func (s *Scanner) attemptEarlyEnd() {
+func (s *HypeScanner) attemptEarlyEnd() {
 	if !s.nextIsOper() {
 		s.addSimpleToken(token.END)
 		s.match('\n')
 	}
 }
 
-func (s *Scanner) futureChar() rune {
+func (s *HypeScanner) futureChar() rune {
 	cur := s.Current
 	for s.peek() == ' ' {
 		s.Current++
@@ -243,11 +243,11 @@ func (s *Scanner) futureChar() rune {
 	return p
 }
 
-func (s *Scanner) prev() rune {
+func (s *HypeScanner) prev() rune {
 	return rune(s.Source[s.Current-1])
 }
 
-func (s *Scanner) peekNext() rune {
+func (s *HypeScanner) peekNext() rune {
 	// If current + 1 is greater if equal to len of source, if source is 10, and current is 10
 	if s.Current+1 >= len(s.Source) {
 		return '0'
@@ -255,7 +255,7 @@ func (s *Scanner) peekNext() rune {
 	return rune(s.Source[s.Current+1])
 }
 
-func (s *Scanner) string() {
+func (s *HypeScanner) string() {
 	for s.peek() != '"' && !s.isAtEnd() { // Keep searching for string closing
 		if s.peek() == '\n' {
 			s.Line += 1
@@ -284,7 +284,7 @@ func (s *Scanner) string() {
 }
 
 // Consumes next character of source line and returns it
-func (s *Scanner) advance() rune {
+func (s *HypeScanner) advance() rune {
 	if s.isAtEnd() {
 		return '0'
 	}
@@ -294,11 +294,11 @@ func (s *Scanner) advance() rune {
 	return rune(sub)
 }
 
-func (s *Scanner) addSimpleToken(tokType token.TokenType) {
+func (s *HypeScanner) addSimpleToken(tokType token.TokenType) {
 	s.addToken(tokType, nil)
 }
 
-func (s *Scanner) addToken(tokType token.TokenType, literal *literal.Literal) {
+func (s *HypeScanner) addToken(tokType token.TokenType, literal *literal.Literal) {
 	text := s.Source[s.Start:s.Current]
 	escapedText := strconv.QuoteToASCII(text)
 	escapedText = escapedText[1 : len(escapedText)-1] // Remove the surrounding quotes added by QuoteToASCII
@@ -306,7 +306,7 @@ func (s *Scanner) addToken(tokType token.TokenType, literal *literal.Literal) {
 	s.Tokens = append(s.Tokens, *newToken)
 }
 
-func (s *Scanner) match(expected byte) bool {
+func (s *HypeScanner) match(expected byte) bool {
 	if s.isAtEnd() {
 		return false
 	} // There is no next token, we are at the end
@@ -318,11 +318,11 @@ func (s *Scanner) match(expected byte) bool {
 	return true    // The passed char is what we expected
 }
 
-func (s *Scanner) isDigit(c rune) bool {
+func (s *HypeScanner) isDigit(c rune) bool {
 	return c >= '0' && c <= '9'
 }
 
-func (s *Scanner) number() {
+func (s *HypeScanner) number() {
 	// While the characters being explored are part d
 	for s.isDigit(s.peek()) {
 		s.advance() // What if we try to advance but are at the end?
@@ -346,7 +346,7 @@ func (s *Scanner) number() {
 	// s.attemptEarlyEnd()
 }
 
-func (s *Scanner) identifier() {
+func (s *HypeScanner) identifier() {
 	// While next char is alphanumeric, advance
 	for s.isAlphaNumeric(s.peek()) && !s.isAtEnd() {
 		s.advance()
@@ -369,11 +369,11 @@ func (s *Scanner) identifier() {
 }
 
 // Check and see if a byte char is alpha numeric
-func (s *Scanner) isAlpha(c rune) bool {
+func (s *HypeScanner) isAlpha(c rune) bool {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
 }
 
 // If is alphabetical or number
-func (s *Scanner) isAlphaNumeric(c rune) bool {
+func (s *HypeScanner) isAlphaNumeric(c rune) bool {
 	return s.isAlpha(c) || s.isDigit(c)
 }

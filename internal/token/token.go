@@ -136,10 +136,10 @@ var BadTokens = map[rune]bool{
 }
 
 type Token struct {
-	Type    TokenType
-	Lexeme  string
-	Literal *literal.Literal
-	Line    int
+	Type    TokenType			// Const type from token.go
+	Lexeme  string				// String of token as it occurs in the src
+	Literal *literal.Literal	// Container for value if it has one, can be nil
+	Line    int					// Line in src file
 }
 
 func NewToken(tokType TokenType, lexeme string, literal *literal.Literal, line int) *Token {

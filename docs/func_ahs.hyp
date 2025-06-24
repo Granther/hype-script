@@ -1,0 +1,23 @@
+// "Its all functions?" ... "Always has been..."
+
+var x = {
+    print "thing"
+}
+
+var y = { return 2 }
+
+// z = 10
+var z = {
+    print "hey, im z"
+    return 10
+}()
+
+// Get ptr or something
+print y
+
+// Gets val
+print y()
+
+print {y() + y()}()
+
+print(x(), y())
